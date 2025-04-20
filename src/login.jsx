@@ -5,6 +5,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  useColorModeValue,
   VStack,
   Heading,
   Alert,
@@ -28,6 +29,9 @@ const LoginForm = () => {
 
   const toast = useToast();
   const navigate = useNavigate();
+  const cardBg = useColorModeValue("gray.50", "gray.800");
+    // const cardBorder = useColorModeValue("gray.200", "gray.600");
+    // const textColor = useColorModeValue("gray.700", "gray.200");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -72,75 +76,77 @@ const LoginForm = () => {
   };
 
   return (
-   <Flex
-           minHeight="80vh"
-           justify="center"
-           align="center"
-           bg="gray.50" // optional background
-         >
-           <Box
-             w={["70%", "60%", "400px"]}
-             mx="auto"
-             p={6}
-             boxShadow="md"
-             borderRadius="md"
-           >
-      <Heading mb={6} textAlign="center">
-        Login
-      </Heading>
-
-      {error && (
-        <Alert status="error" mb={4}>
-          <AlertIcon />
-          {error}
-        </Alert>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl isRequired>
-            <FormLabel>Email</FormLabel>
-            <Input
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </FormControl>
-
-          <FormControl isRequired>
-            <FormLabel>Password</FormLabel>
-            <Input
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </FormControl>
-          <Checkbox
-            name="rememberMe"
-            isChecked={formData.rememberMe}
-            onChange={handleChange}
-          >
-            Remember Me
-          </Checkbox>
-
-          <Button type="submit" colorScheme="blue" width="full">
-            Login
-          </Button>
-        </VStack>
-      </form>
-
-      <Button
-        colorScheme="blue"
-        onClick={() => navigate(`/forget-password`)}
-        width="full"
-        mt={4}
+    <Flex
+      minHeight="80vh"
+      justify="center"
+      align="center"
+      bg={cardBg} // optional background
+    >
+      <Box
+        w={["70%", "60%", "400px"]}
+        mx="auto"
+        p={6}
+        boxShadow="md"
+        borderRadius="md"
+        bg={cardBg}
+       
       >
-        Forget Password?
-      </Button>
+        <Heading mb={6} textAlign="center">
+          Login
+        </Heading>
+
+        {error && (
+          <Alert status="error" mb={4}>
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4}>
+            <FormControl isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>Password</FormLabel>
+              <Input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </FormControl>
+            <Checkbox
+              name="rememberMe"
+              isChecked={formData.rememberMe}
+              onChange={handleChange}
+            >
+              Remember Me
+            </Checkbox>
+
+            <Button type="submit" colorScheme="blue" width="full">
+              Login
+            </Button>
+          </VStack>
+        </form>
+
+        <Button
+          colorScheme="blue"
+          onClick={() => navigate(`/forget-password`)}
+          width="full"
+          mt={4}
+        >
+          Forget Password?
+        </Button>
       </Box>
-      </Flex>
+    </Flex>
   );
 };
 

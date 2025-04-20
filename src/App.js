@@ -1,5 +1,4 @@
-
-import React, {  useRef } from "react";
+import React, { useRef } from "react";
 import {
   ChakraProvider,
   ColorModeScript,
@@ -19,11 +18,10 @@ import {
   Link as ChakraLink,
   Icon,
   Text,
-
 } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { HamburgerIcon} from "@chakra-ui/icons";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
@@ -34,15 +32,18 @@ import ProtectedRoute from "./ProtectedRoute";
 import EbookForm from "./postEbook";
 import Products from "./fetch";
 import { useAuth } from "./context/authContext";
-import ProductDetails from "./fetch_id"
+import ProductDetails from "./fetch_id";
 import ForgetPassword from "./forgetPassword";
-import CartCount from "./utilities/cartCount"; 
-import Cart from "./cart"; 
-import Checkout from "./checkout"; 
-import VerifyPayment from "./VerifyPayment"
+import CartCount from "./utilities/cartCount";
+import Cart from "./cart";
+import Checkout from "./checkout";
+import VerifyPayment from "./VerifyPayment";
 import GetAllUsers from "./getAllUser";
 import UserDetails from "./getUser";
-import UpdateUserRole from "./updateRole"
+import UpdateUserRole from "./updateRole";
+import BrandProductSelector from "./brandProduct";
+import CategoryProductSelector from "./categoryProduct";
+import ProductReviews from "./ProductReviews"
 const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
 // Define theme
 
@@ -65,7 +66,6 @@ const App = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
-
 
   return (
     <ChakraProvider theme={theme}>
@@ -167,7 +167,34 @@ const App = () => {
                 <CartCount />
               </ListItem>
             )}
-
+            <ListItem>
+              <ChakraLink
+                as={Link}
+                to="/browse-by-brand"
+                _hover={{ textDecoration: "none" }}
+                display="flex"
+                alignItems="center"
+                gap={2}
+              >
+                <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                  Brands
+                </Text>
+              </ChakraLink>
+            </ListItem>
+            <ListItem>
+              <ChakraLink
+                as={Link}
+                to="/browse-by-category"
+                _hover={{ textDecoration: "none" }}
+                display="flex"
+                alignItems="center"
+                gap={2}
+              >
+                <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                  Categories
+                </Text>
+              </ChakraLink>
+            </ListItem>
             {!user && (
               <>
                 {!hideSignup && (
@@ -207,14 +234,34 @@ const App = () => {
               (user.role === "admin" || user.role === "staff") &&
               !hideAdd && (
                 <ListItem>
-                  <Link to="/add-product">Add New Product</Link>
+                  <ChakraLink
+                    as={Link}
+                    to="/add-product"
+                    _hover={{ textDecoration: "none" }}
+                    display="flex"
+                    alignItems="center"
+                    gap={2}
+                  >
+                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                      Add Product
+                    </Text>
+                  </ChakraLink>
                 </ListItem>
               )}
 
             {user?.role === "admin" && (
-              <ListItem>
-                <Link to="/users">Users</Link>
-              </ListItem>
+              <ChakraLink
+                as={Link}
+                to="/users"
+                _hover={{ textDecoration: "none" }}
+                display="flex"
+                alignItems="center"
+                gap={2}
+              >
+                <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                  Users
+                </Text>
+              </ChakraLink>
             )}
 
             {user && !hideLogout && (
@@ -308,6 +355,16 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/transact" element={<Checkout user={user} />} />
         <Route path="/verify-payment" element={<VerifyPayment />} />
+        <Route path="/forget-password" element={<ProductReviews />} />
+        <Route
+          path="/browse-by-brand"
+          element={<BrandProductSelector />}
+        />{" "}
+        {/* NEW LINE */}
+        <Route
+          path="/browse-by-category"
+          element={<CategoryProductSelector />}
+        />
         <Route
           path="//user/:userId"
           element={
@@ -320,7 +377,12 @@ const App = () => {
             <ProtectedRoute element={<UpdateUserRole />} roles={["admin"]} />
           }
         />
-
+        <Route
+          path="/ex-product/:id"
+          element={
+            <ProtectedRoute element={<UpdateUserRole />} roles={["admin"]} />
+          }
+        />
         <Route
           path="/add-product"
           element={
@@ -350,14 +412,13 @@ const DarkModeToggle = () => {
     <Button
       onClick={toggleColorMode}
       position="fixed"
-      bottom="10px"  // Adjust bottom distance as needed
-      right="10px"   // Adjust right distance as needed
+      bottom="10px" // Adjust bottom distance as needed
+      right="10px" // Adjust right distance as needed
       zIndex="999"
     >
       {colorMode === "light" ? "Dark Mode 🌙" : "Light Mode ☀️"}
     </Button>
   );
 };
-
 
 export default App;

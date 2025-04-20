@@ -3,7 +3,7 @@ import {
   Box,
   Button,
   Center,
-//   Spinner,
+  //   Spinner,
   Text,
   VStack,
   HStack,
@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCart();
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   if (cart.length === 0) {
     return (
       <Center h="100vh">
@@ -69,10 +69,7 @@ const Cart = () => {
       <Text fontSize="lg" fontWeight="bold">
         Total: NGN {getTotalPrice()}
       </Text>
-      <Button
-        colorScheme="teal"
-        onClick={() => navigate(`/transact`)}
-      >
+      <Button colorScheme="teal" onClick={() => navigate(`/transact`)}>
         Checkout
       </Button>
     </VStack>

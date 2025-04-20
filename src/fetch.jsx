@@ -7,18 +7,15 @@ import {
   Grid,
   GridItem,
   Image,
- 
   Text,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "./context/CartContext"; 
+import { useCart } from "./context/CartContext";
 const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
-
-
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -28,14 +25,15 @@ const Products = () => {
   const [limit] = useState(21); // Number of products per page
   const [totalProducts, setTotalProducts] = useState(0);
   const navigate = useNavigate();
-   const { addToCart } = useCart();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get(`/product?page=${page}&limit=${limit}`, {
-          
-        });
+        const response = await api.get(
+          `/product?page=${page}&limit=${limit}`,
+          {}
+        );
 
         console.log("✅ Response Data:", response.data);
         setProducts(response.data.data || []);
@@ -46,24 +44,24 @@ const Products = () => {
       } finally {
         setLoading(false);
       }
-      };
+    };
     fetchProducts();
   }, [page, limit]);
-if (loading) {
-  return (
-    <Center p={4}>
-      <Box
-        as="div"
-        border="4px solid transparent"
-        borderTop="4px solid #48BB78"
-        borderRadius="50%"
-        width="50px"
-        height="50px"
-        animation={`${spinAnimation} 1.5s linear infinite`}
-      />
-    </Center>
-  );
-}
+  if (loading) {
+    return (
+      <Center p={4}>
+        <Box
+          as="div"
+          border="4px solid transparent"
+          borderTop="4px solid #48BB78"
+          borderRadius="50%"
+          width="50px"
+          height="50px"
+          animation={`${spinAnimation} 1.5s linear infinite`}
+        />
+      </Center>
+    );
+  }
 
   if (error) return <p>Error: {error}</p>;
 
@@ -96,9 +94,11 @@ if (loading) {
               borderWidth="1px"
               borderColor="gray.300"
               borderRadius="md"
-              boxShadow="sm"
               textAlign="center"
               minH="200px"
+              shadow="md"
+              transition="all 0.2s"
+              _hover={{ shadow: "lg", transform: "scale(1.02)" }}
             >
               <Image
                 src={product.images[0]}
@@ -122,7 +122,7 @@ if (loading) {
               <Text fontSize="xs" color="red.500">
                 {product.discountPercentage.toFixed(2)}% off
               </Text>
-               <Button
+              <Button
                 colorScheme="green"
                 onClick={() => addToCart(product)} // Add product to cart
                 mt="1"

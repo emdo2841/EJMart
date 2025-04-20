@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
 import api from "./context/api";
-import { Box, Center, Text, CircularProgress, Button, useToast, Image} from "@chakra-ui/react";
+import { AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,Box, Center, Text, CircularProgress, Button, useToast, Image} from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "./context/authContext";
+import { useRef } from "react";
 
 const UserDetails = () => {
   const [userData, setUserData] = useState(null); // Storing a single user, not an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const cancelRef = useRef();
+  
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -54,6 +64,26 @@ const UserDetails = () => {
 
     fetchUser();
   }, [user, userId, toast]);
+  
+    const handleDelete = async () => {
+      try {
+        await api.delete(`/auth/user/${selectedUserId}`, {
+          withCredentials: true,
+        });
+  
+        setUserData(userData.filter((u) => u._id !== selectedUserId));
+        setIsDialogOpen(false);
+        setSelectedUserId(null);
+      } catch (error) {
+        toast({
+          title: "Delete failed",
+          description: error.response?.data?.message || "Failed to delete user",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
 
   if (loading) {
     return (
@@ -122,6 +152,40 @@ const UserDetails = () => {
           Delete
         </Button>
       </Box>
+      <AlertDialog
+                          isOpen={isDialogOpen}
+                          leastDestructiveRef={cancelRef}
+                          onClose={() => setIsDialogOpen(false)}
+                        >
+                          <AlertDialogOverlay>
+                            <AlertDialogContent>
+                              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                Delete User
+                              </AlertDialogHeader>
+      
+                              <AlertDialogBody>
+                                Are you sure you want to delete this user? This action
+                                cannot be undone.
+                              </AlertDialogBody>
+      
+                              <AlertDialogFooter>
+                                <Button
+                                  ref={cancelRef}
+                                  onClick={() => setIsDialogOpen(false)}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  colorScheme="red"
+                                  onClick={handleDelete}
+                                  ml={3}
+                                >
+                                  Delete
+                                </Button>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialogOverlay>
+                        </AlertDialog>
     </Box>
   );
 };

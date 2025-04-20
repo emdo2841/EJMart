@@ -16,7 +16,6 @@ root.render(
           <App />
         </CartProvider>
       </AuthProvider>
-      ,
     </React.StrictMode>
   </BrowserRouter>
 );

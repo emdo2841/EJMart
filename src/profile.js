@@ -10,11 +10,13 @@ import {
   Button,
 } from "@chakra-ui/react";
 import api from "./context/api"; // your axios instance
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -60,7 +62,7 @@ const Profile = () => {
       >
         <Avatar
           size="2xl"
-          src={user.avatar || "https://bit.ly/broken-link"}
+          src={user.image || "https://bit.ly/broken-link"}
           name={user.fullName || "User"}
           mb={4}
         />
@@ -80,7 +82,7 @@ const Profile = () => {
           mt={6}
           colorScheme="teal"
           size="sm"
-          onClick={() => alert("Edit Profile feature coming soon!")}
+          onClick={() => navigate(`/update-role/${user._id}`)}
         >
           Edit Profile
         </Button>

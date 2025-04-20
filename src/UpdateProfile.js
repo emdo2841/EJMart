@@ -8,7 +8,6 @@ import {
   VStack,
   Heading,
   Alert,
-  useColorModeValue,
   AlertIcon,
   useToast,
   Flex,
@@ -18,22 +17,18 @@ import FileUploadPreview from "./fileUploadPreview"; // Import the updated compo
 import api from "./context/api";
 import PasswordInput from "./components/PasswordInput"; // Import the PasswordInput component 
 
-const Form = () => {
+const UpdateProfile = () => {
   const toast = useToast();
   const navigate = useNavigate();
-  const cardBg = useColorModeValue("gray.50", "gray.800");
-    const cardBorder = useColorModeValue("gray.200", "gray.600");
-    // const textColor = useColorModeValue("gray.700", "gray.200");
+
   const [formData, setFormData] = useState({
     fullName: "",
-    email: "",
-    password: "",
     address: "",
     phone: "",
     image: null,
   });
 
-  const [error, setError] = useState({});
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +51,7 @@ const Form = () => {
     });
 
     try {
-      const res = await api.post("/auth/register", data, {
+      const res = await api.update("/auth/update-profile", data, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -71,42 +66,28 @@ const Form = () => {
           duration: 5000,
           isClosable: true,
         });
-        navigate("/login");
-        setFormData({
-          fullName: "",
-          email: "",
-          password: "",
-          address: "",
-          phone: "",
-          image: null,
-        });
-        setError({});
+        navigate("/profile");
       }
     } catch (err) {
       console.error(err);
-      const message = err.response?.data?.message;
-
-      // Match known server messages to fields
-      if (message.includes("email")) {
-        setError({ email: message });
-      } else if (message.includes("Password")) {
-        setError({ password: message });
-      } else if (message.includes("phone")) {
-        setError({ phone: message });
-      } else if (message.includes("fill all fields")) {
-        setError({ form: message });
-      } else {
-        setError({ form: message || "An unknown error occurred" });
-      }
+      toast({
+        title: "Updating profile failed",
+        description:
+          error.response?.data?.message ||
+          "Something went wrong during update",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-  }
+  };
 
   return (
     <Flex
       minHeight="80vh"
       justify="center"
       align="center"
-      bg={cardBg} // optional background
+      bg="gray.50" // optional background
     >
       <Box
         w={["70%", "60%", "400px"]}
@@ -114,29 +95,20 @@ const Form = () => {
         p={6}
         boxShadow="md"
         borderRadius="md"
-        bg={cardBg}
-        borderColor={cardBorder}
-        
       >
         <Heading mb={2} textAlign="center" size="md">
-          Sign Up
+          Update Profile
         </Heading>
 
-        {error.form && (
+        {error && (
           <Alert status="error" mb={4}>
             <AlertIcon />
-            {error.form}
+            {error}
           </Alert>
         )}
 
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
-            {error.fullName && (
-              <Alert status="error" fontSize="sm" mb={1} p={2}>
-                <AlertIcon />
-                {error.fullName}
-              </Alert>
-            )}
             <FormControl isRequired>
               <FormLabel>Full Name</FormLabel>
               <Input
@@ -146,51 +118,8 @@ const Form = () => {
                 value={formData.fullName}
                 onChange={handleChange}
               />
-            </FormControl>
-
-            {error.email && (
-              <Alert status="error" fontSize="sm" mb={1} p={2}>
-                <AlertIcon />
-                {error.email}
-              </Alert>
-            )}
-            <FormControl isRequired>
-              <FormLabel>Email</FormLabel>
-              <Input
-                placeholder="Enter email"
-                size="sm"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </FormControl>
-
-            {error.password && (
-              <Alert status="error" fontSize="sm" mb={1} p={2}>
-                <AlertIcon />
-                {error.password}
-              </Alert>
-            )}
-            <FormControl isRequired>
-              <FormLabel>Password</FormLabel>
-              <PasswordInput
-                placeholder="Enter password"
-                size="sm"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                autoComplete="current-password"
-              />
-            </FormControl>
-
-            {error.address && (
-              <Alert status="error" fontSize="sm" mb={1} p={2}>
-                <AlertIcon />
-                {error.address}
-              </Alert>
-            )}
+                      </FormControl>
+                      
             <FormControl isRequired>
               <FormLabel>Address</FormLabel>
               <Input
@@ -203,12 +132,6 @@ const Form = () => {
               />
             </FormControl>
 
-            {error.phone && (
-              <Alert status="error" fontSize="sm" mb={1} p={2}>
-                <AlertIcon />
-                {error.phone}
-              </Alert>
-            )}
             <FormControl isRequired>
               <FormLabel>Telephone</FormLabel>
               <Input
@@ -220,6 +143,7 @@ const Form = () => {
                 onChange={handleChange}
               />
             </FormControl>
+
             <FormControl>
               <FormLabel>Picture</FormLabel>
               <FileUploadPreview
@@ -228,8 +152,9 @@ const Form = () => {
                 }
               />
             </FormControl>
+
             <Button type="submit" colorScheme="blue" width="full">
-              Sign Up
+              Update Profile
             </Button>
           </VStack>
         </form>
@@ -237,4 +162,4 @@ const Form = () => {
     </Flex>
   );
 };
-export default Form;
+export default UpdateProfile;

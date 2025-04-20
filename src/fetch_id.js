@@ -1,161 +1,12 @@
-// import { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom";
-// import {
-//   Box,
-//   Button,
-//   Center,
-//   Image,
-//   Spinner,
-//   Text,
-//   HStack,
-//   VStack,
-// } from "@chakra-ui/react";
-// import api from "./context/api";
-
-// const ProductDetails = () => {
-//   const { id } = useParams();
-//   const [product, setProduct] = useState(null);
-//   const [selectedImage, setSelectedImage] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchProductById = async () => {
-//       try {
-//         const response = await api.get(`/product/${id}`);
-//         const productData = response.data.data;
-//         setProduct(productData);
-//         setSelectedImage(productData.images?.[0] || null); // Set first image as default
-//       } catch (err) {
-//         setError(err.response?.data?.message || "Something went wrong");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchProductById();
-//   }, [id]);
-
-//   if (loading) {
-//     return (
-//       <Center h="100vh">
-//         <Spinner size="xl" />
-//       </Center>
-//     );
-//   }
-
-//   if (error) {
-//     return (
-//       <Center h="100vh">
-//         <Text color="red.500">Error: {error}</Text>
-//       </Center>
-//     );
-//   }
-
-//   if (!product) {
-//     return (
-//       <Center h="100vh">
-//         <Text>Product not found</Text>
-//       </Center>
-//     );
-//   }
-
-//   return (
-//     <Center py="10">
-//       <Box
-//         maxW="lg"
-//         borderWidth="1px"
-//         borderRadius="lg"
-//         overflow="hidden"
-//         p={4}
-//         boxShadow="md"
-//         width="100%"
-//       >
-//         <VStack spacing={4}>
-//           {/* Main Image */}
-//           <Image
-//             src={selectedImage}
-//             alt={product.name}
-//             mx="auto"
-//             boxSize="300px"
-//             objectFit="cover"
-//             borderRadius="md"
-//             border="1px solid #ccc"
-//           />
-
-//           {/* Thumbnails if multiple images exist */}
-//           {product.images?.length > 1 && (
-//             <>
-//               <Text fontSize="sm" color="gray.500">
-//                 Click to view more images
-//               </Text>
-//               <HStack spacing={2} flexWrap="wrap">
-//                 {product.images.map((img, idx) => (
-//                   <Image
-//                     key={idx}
-//                     src={img}
-//                     boxSize="60px"
-//                     objectFit="cover"
-//                     borderRadius="md"
-//                     border={
-//                       img === selectedImage
-//                         ? "2px solid green"
-//                         : "1px solid #ccc"
-//                     }
-//                     cursor="pointer"
-//                     onClick={() => setSelectedImage(img)}
-//                     _hover={{ opacity: 0.8 }}
-//                   />
-//                 ))}
-//               </HStack>
-//             </>
-//           )}
-
-//           {/* Product Info */}
-//           <Text fontSize="2xl" fontWeight="bold">
-//             {product.name}
-//           </Text>
-
-//           <Text>
-//             <Text as="span" color="gray.500" textDecoration="line-through">
-//               NGN {product.price}
-//             </Text>{" "}
-//             <Text as="span" color="green.600" fontWeight="bold">
-//               NGN {product.discountedPrice}
-//             </Text>
-//           </Text>
-
-//           <Text fontSize="sm" color="red.500">
-//             {product.discountPercentage?.toFixed(2)}% off
-//           </Text>
-
-//           <Text mt="2" fontSize="md">
-//             {product.description || "No description provided."}
-//           </Text>
-
-//           <Button
-//             mt="4"
-//             colorScheme="blue"
-//             onClick={() => window.history.back()}
-//           >
-//             Go Back
-//           </Button>
-//         </VStack>
-//       </Box>
-//     </Center>
-//   );
-// };
-
-// export default ProductDetails;
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
   Button,
-  Center,
+  Container,
   Image,
   Spinner,
+  Center,
   Text,
   HStack,
   VStack,
@@ -166,59 +17,82 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
+import { FaStar } from "react-icons/fa";
 import api from "./context/api";
 import { useCart } from "./context/CartContext";
+import AddReview from "./updateProduct";
+import { useAuth } from "./context/authContext";
+import { useColorModeValue } from "@chakra-ui/react";
 
 const ProductDetails = () => {
-   const { addToCart } = useCart();
+  const { addToCart } = useCart();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [visibleReviews, setVisibleReviews] = useState(3);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { user } = useAuth();
+  const cardBg = useColorModeValue("gray.50", "gray.800");
+  const cardBorder = useColorModeValue("gray.200", "gray.600");
+  const textColor = useColorModeValue("gray.700", "gray.200");
 
 
-
-  useEffect(() => {
-    const fetchProductById = async () => {
-      try {
-        const response = await api.get(`/product/${id}`);
-        const productData = response.data.data;
-        setProduct(productData);
-        setSelectedImage(productData.images?.[0] || null);
-      } catch (err) {
-        setError(err.response?.data?.message || "Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProductById();
+  const fetchProductById = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/product/${id}`);
+      const productData = response.data.data;
+      setProduct(productData);
+      setSelectedImage(productData.images?.[0] || null);
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  const handleImageClick = (img) => {
-  const index = product.images.indexOf(img);
-  setCurrentImageIndex(index);
-  setModalImage(img);
-  onOpen();
+  useEffect(() => {
+    fetchProductById();
+  }, [fetchProductById]);
+  
+ const renderStars = (rating) => {
+  const stars = [];
+  for (let i = 0; i < 5; i++) {
+    stars.push(
+      <FaStar
+        key={i}
+        color={i < rating ? "#FFD700" : "#E5E5E5"} // Gold or light gray
+        style={{ marginRight: "2px" }}
+      />
+    );
+  }
+  return <HStack spacing="1">{stars}</HStack>; // Optional: clean spacing
 };
+
+  const handleImageClick = (img) => {
+    const index = product.images.indexOf(img);
+    setCurrentImageIndex(index);
+    setModalImage(img);
+    onOpen();
+  };
 
   const handleNext = () => {
-  const nextIndex = (currentImageIndex + 1) % product.images.length;
-  setCurrentImageIndex(nextIndex);
-  setModalImage(product.images[nextIndex]);
-};
+    const nextIndex = (currentImageIndex + 1) % product.images.length;
+    setCurrentImageIndex(nextIndex);
+    setModalImage(product.images[nextIndex]);
+  };
 
-const handlePrev = () => {
-  const prevIndex =
-    (currentImageIndex - 1 + product.images.length) % product.images.length;
-  setCurrentImageIndex(prevIndex);
-  setModalImage(product.images[prevIndex]);
-};
-
+  const handlePrev = () => {
+    const prevIndex =
+      (currentImageIndex - 1 + product.images.length) % product.images.length;
+    setCurrentImageIndex(prevIndex);
+    setModalImage(product.images[prevIndex]);
+  };
 
   if (loading) {
     return (
@@ -245,18 +119,21 @@ const handlePrev = () => {
   }
 
   return (
-    <Center py="10">
+    <Container p="10" alignSelf="flex-start">
       <Box
-        maxW="lg"
-        borderWidth="1px"
-        borderRadius="lg"
-        overflow="hidden"
+        mt={6}
         p={4}
-        boxShadow="md"
-        width="100%"
+        bg={cardBg}
+        border="1px solid"
+        borderColor={cardBorder}
+        borderRadius="md"
+        textAlign="left"
+        w="100%"
+        maxW="sm"
+        alignSelf="flex-start"
       >
         <VStack spacing={4}>
-          {/* Main Image with click to open modal */}
+          {/* Main Image */}
           <Image
             src={selectedImage}
             alt={product.name}
@@ -300,43 +177,125 @@ const handlePrev = () => {
             </>
           )}
 
-          {/* Info */}
-          <Text fontSize="2xl" fontWeight="bold">
+          {/* Product Info */}
+          <Text fontSize="2xl" color={textColor} fontWeight="bold">
             {product.name}
           </Text>
 
           <Text>
-            <Text as="span" color="gray.500" textDecoration="line-through">
-              NGN {product.price}
-            </Text>{" "}
             <Text as="span" color="green.600" fontWeight="bold">
               NGN {product.discountedPrice}
             </Text>
+            <Text as="span" color="gray.500" textDecoration="line-through">
+              NGN {product.price}
+            </Text>{" "}
           </Text>
 
           <Text fontSize="sm" color="red.500">
             {product.discountPercentage?.toFixed(2)}% off
           </Text>
 
-          <Text mt="2" fontSize="md">
+          <Text mt="2" fontSize="sm">
             {product.description || "No description provided."}
           </Text>
+          <Text fontWeight="bold" mt="2" color={textColor}>
+            {product.averageRating || "No rating yet."}
+          </Text>
+
+          {product.reviews?.length > 0 ? (
+            <Box w="100%" mt="4">
+              <Text fontWeight="bold" mb="2" color={textColor}>
+                Customer Reviews:
+              </Text>
+              {product.reviews.slice(0, visibleReviews).map((review, idx) => (
+                <Box key={idx} p="3" borderWidth="1px" borderRadius="md" mb="2">
+                  <Text fontWeight="semibold">
+                    {review.user?.fullName || "Anonymous"} –{" "}
+                    {renderStars(review.rating)}
+                  </Text>
+                  <Text mt="1" color={textColor}>
+                    {review.comment}
+                  </Text>
+                  <Text fontSize="xs" color="gray.500" mt="1">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </Text>
+                </Box>
+              ))}
+
+              {visibleReviews < product.reviews.length && (
+                <Button
+                  onClick={() => setVisibleReviews((prev) => prev + 3)}
+                  size="sm"
+                  variant="outline"
+                  colorScheme="blue"
+                  mt={2}
+                >
+                  Show More Reviews
+                </Button>
+              )}
+
+              {visibleReviews >= product.reviews.length &&
+                product.reviews.length > 3 && (
+                  <Button
+                    onClick={() => setVisibleReviews(3)}
+                    size="sm"
+                    variant="outline"
+                    colorScheme="gray"
+                    mt={2}
+                  >
+                    Show Less
+                  </Button>
+                )}
+            </Box>
+          ) : (
+            <Text>No reviews yet.</Text>
+          )}
+
           <Button
             colorScheme="green"
-            onClick={() => addToCart(product)} // Add product to cart
+            onClick={() => addToCart(product)}
             mt="1"
             size="xs"
           >
             Add to Cart
           </Button>
-
+          {/* 
           <Button
             mt="4"
             colorScheme="blue"
             onClick={() => window.history.back()}
           >
             Go Back
-          </Button>
+          </Button> */}
+          {!loading && user && (
+            <AddReview
+              productId={product._id}
+              onSuccess={fetchProductById}
+            />
+          )}
+          {!loading && !user && (
+            <Box
+              mt={6}
+              p={4}
+              bg={cardBg}
+              border="1px solid"
+              borderColor={cardBorder}
+              borderRadius="md"
+              textAlign="center"
+              w="100%"
+            >
+              <Text fontSize="md" color="gray.700" mb={2}>
+                Want to leave a review?
+              </Text>
+              <Button
+                colorScheme="blue"
+                size="sm"
+                onClick={() => (window.location.href = "/login")}
+              >
+                Log In to Review
+              </Button>
+            </Box>
+          )}
         </VStack>
       </Box>
 
@@ -346,7 +305,7 @@ const handlePrev = () => {
         <ModalContent bg="transparent" boxShadow="none" position="relative">
           <ModalCloseButton color="white" />
 
-          {/* Left Arrow */}
+          {/* Arrows */}
           <Button
             position="absolute"
             left="0"
@@ -362,8 +321,6 @@ const handlePrev = () => {
           >
             &#8592;
           </Button>
-
-          {/* Right Arrow */}
           <Button
             position="absolute"
             right="0"
@@ -394,7 +351,7 @@ const handlePrev = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </Center>
+    </Container>
   );
 };
 

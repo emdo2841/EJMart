@@ -1,7 +1,7 @@
 // src/components/Checkout.js
 import React, { useState } from "react";
 import {
-  Box,
+  Box, 
   Button,
   Input,
   VStack,

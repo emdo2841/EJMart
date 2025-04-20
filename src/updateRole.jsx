@@ -136,7 +136,7 @@ const UpdateUserRole = () => {
           borderRadius="md"
           boxShadow="md"
         >
-          <FormLabel>User Role</FormLabel>
+          <FormLabel>Update User Role</FormLabel>
           <Select
             name="role"
             value={role}

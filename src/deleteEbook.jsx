@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import axios from "axios";
+import api from "./context/api";
 import { Center, Text, Spinner, useToast } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "./context/authContext";
@@ -28,8 +28,8 @@ const DeleteEbook = () => {
       }
 
       try {
-        const response = await axios.delete(
-          `https://ecoomerce-store-t40x.onrender.com/api/product/${ebookId}`,
+        const response = await api.delete(
+          `/product/${Id}`,
           { withCredentials: true }
         );
 
@@ -55,11 +55,11 @@ const DeleteEbook = () => {
           isClosable: true,
           position: "top",
         });
-        navigate(`/ebook`);
+        navigate(`/`);
       }
     };
 
-    if (ebookId) {
+    if (id) {
       deleteEbook();
     }
   }, [ebookId, user, navigate, toast]);
