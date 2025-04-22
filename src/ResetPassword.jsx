@@ -59,7 +59,7 @@ import {
   useToast,
   Flex,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "./context/api"; // Axios instance
 
 const ResetPassword = () => {
@@ -67,16 +67,17 @@ const ResetPassword = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const { token } = useParams(); // Get the token from the URL
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); 
     setLoading(true);
 
     try {
       // Send email to backend to request password reset
-      const response = await api.post("/auth/reset-password", { password });
+      const response = await api.post(`/auth/reset-password${token}`, { password });
 
       if (response.data.message) {
         toast({
