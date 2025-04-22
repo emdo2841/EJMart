@@ -8,6 +8,7 @@ import {
   VStack,
   Badge,
   Button,
+  Flex
 } from "@chakra-ui/react";
 import api from "./context/api"; // your axios instance
 import { useNavigate } from "react-router-dom";
@@ -77,15 +78,24 @@ const Profile = () => {
             {user.role}
           </Badge>
         </VStack>
-
-        <Button
-          mt={6}
-          colorScheme="teal"
-          size="sm"
-          onClick={() => navigate(`/update-role/${user._id}`)}
-        >
-          Edit Profile
-        </Button>
+        <Flex>
+          <Button
+            mt={6}
+            colorScheme="teal"
+            size="sm"
+            onClick={() => navigate(`/update-role/${user._id}`)}
+          >
+            Edit Profile
+          </Button>
+          <Button
+            mt={6}
+            colorScheme="teal"
+            size="sm"
+            onClick={() => navigate(`/update-password`)}
+          >
+            Edit Password
+          </Button>
+        </Flex>
       </Box>
     </Center>
   );

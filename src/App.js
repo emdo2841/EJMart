@@ -35,6 +35,7 @@ import { useAuth } from "./context/authContext";
 import ProductDetails from "./fetch_id";
 import ForgetPassword from "./forgetPassword";
 import ResetPassword from "./ResetPassword"
+import UpdatePassword from "./UpdatePassword";
 import CartCount from "./utilities/cartCount";
 import Cart from "./cart";
 import Checkout from "./checkout";
@@ -47,6 +48,8 @@ import CategoryProductSelector from "./categoryProduct";
 import AddReview from "./AddReview"
 import UpdateReview from "./UpdateReview";
 import UpdateProduct from "./update";
+import OutOfStockProducts from "./OutOfStock";
+import FlashSale from "./FlashSale"
 const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
 // Define theme
 
@@ -451,10 +454,15 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route
+          path="/update-password"
+          element={<ProtectedRoute element={<UpdatePassword />} />}
+        />
         <Route path="/cart" element={<Cart />} />
         <Route path="/transact" element={<Checkout user={user} />} />
         <Route path="/verify-payment" element={<VerifyPayment />} />
         <Route path="/add-review" element={<AddReview />} />
+        <Route path="/flash-sale" element={<FlashSale />} />
         <Route path="/update-review/:productId" element={<UpdateReview />} />
         <Route
           path="/browse-by-brand"
@@ -470,6 +478,15 @@ const App = () => {
           element={
             <ProtectedRoute
               element={<UpdateProduct />}
+              roles={["admin", "staff"]}
+            />
+          }
+        />
+        <Route
+          path="/out-of-stock"
+          element={
+            <ProtectedRoute
+              element={<OutOfStockProducts />}
               roles={["admin", "staff"]}
             />
           }
