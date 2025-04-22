@@ -10,6 +10,7 @@ const FileUploadPreview = ({ setImage }) => {
     accept: {
       "image/jpeg": [],
       "image/png": [],
+      "image/jpg": [],
     },
     maxFiles: 1,
     maxSize: 2 * 1024 * 1024, // 2MB

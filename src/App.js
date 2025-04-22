@@ -34,6 +34,7 @@ import Products from "./fetch";
 import { useAuth } from "./context/authContext";
 import ProductDetails from "./fetch_id";
 import ForgetPassword from "./forgetPassword";
+import ResetPassword from "./ResetPassword"
 import CartCount from "./utilities/cartCount";
 import Cart from "./cart";
 import Checkout from "./checkout";
@@ -43,7 +44,9 @@ import UserDetails from "./getUser";
 import UpdateUserRole from "./updateRole";
 import BrandProductSelector from "./brandProduct";
 import CategoryProductSelector from "./categoryProduct";
-import ProductReviews from "./ProductReviews"
+import AddReview from "./AddReview"
+import UpdateReview from "./UpdateReview";
+import UpdateProduct from "./update";
 const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
 // Define theme
 
@@ -101,7 +104,11 @@ const App = () => {
           <ChakraLink
             as={Link}
             to="/"
-            _hover={{ textDecoration: "none" }}
+            transition="all 0.2s"
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "none",
+            }}
             display="flex"
             alignItems="center"
             gap={2}
@@ -126,7 +133,11 @@ const App = () => {
               <ChakraLink
                 as={Link}
                 to="/cart"
-                _hover={{ textDecoration: "none" }}
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                }}
                 display="flex"
                 alignItems="center"
                 gap={2}
@@ -152,7 +163,11 @@ const App = () => {
                 <ChakraLink
                   as={Link}
                   to="/cart"
-                  _hover={{ textDecoration: "none" }}
+                  transition="all 0.2s"
+                  _hover={{
+                    transform: "scale(1.02)",
+                    textDecoration: "none",
+                  }}
                   display="flex"
                   alignItems="center"
                   gap={2}
@@ -163,15 +178,28 @@ const App = () => {
             )}
 
             {user && (
-              <ListItem>
-                <CartCount />
+              <ListItem
+                color="blue.700"
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                }}
+              >
+                <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                  <CartCount />
+                </Text>
               </ListItem>
             )}
             <ListItem>
               <ChakraLink
                 as={Link}
                 to="/browse-by-brand"
-                _hover={{ textDecoration: "none" }}
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                }}
                 display="flex"
                 alignItems="center"
                 gap={2}
@@ -185,7 +213,11 @@ const App = () => {
               <ChakraLink
                 as={Link}
                 to="/browse-by-category"
-                _hover={{ textDecoration: "none" }}
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                }}
                 display="flex"
                 alignItems="center"
                 gap={2}
@@ -201,7 +233,11 @@ const App = () => {
                   <ChakraLink
                     as={Link}
                     to="/signup"
-                    _hover={{ textDecoration: "none" }}
+                    transition="all 0.2s"
+                    _hover={{
+                      transform: "scale(1.02)",
+                      textDecoration: "none",
+                    }}
                     display="flex"
                     alignItems="center"
                     gap={2}
@@ -216,7 +252,11 @@ const App = () => {
                   <ChakraLink
                     as={Link}
                     to="/login"
-                    _hover={{ textDecoration: "none" }}
+                    transition="all 0.2s"
+                    _hover={{
+                      transform: "scale(1.02)",
+                      textDecoration: "none",
+                    }}
                     display="flex"
                     alignItems="center"
                     gap={2}
@@ -237,7 +277,11 @@ const App = () => {
                   <ChakraLink
                     as={Link}
                     to="/add-product"
-                    _hover={{ textDecoration: "none" }}
+                    transition="all 0.2s"
+                    _hover={{
+                      transform: "scale(1.02)",
+                      textDecoration: "none",
+                    }}
                     display="flex"
                     alignItems="center"
                     gap={2}
@@ -253,7 +297,11 @@ const App = () => {
               <ChakraLink
                 as={Link}
                 to="/users"
-                _hover={{ textDecoration: "none" }}
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                }}
                 display="flex"
                 alignItems="center"
                 gap={2}
@@ -268,7 +316,11 @@ const App = () => {
               <ChakraLink
                 as={Link}
                 to="/logout"
-                _hover={{ textDecoration: "none" }}
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                }}
                 display="flex"
                 alignItems="center"
                 gap={2}
@@ -301,14 +353,18 @@ const App = () => {
                   {!hideSignup && (
                     <ListItem>
                       <Link to="/form" onClick={onClose}>
-                        Signup
+                        <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                          Signup
+                        </Text>
                       </Link>
                     </ListItem>
                   )}
                   {!hideLogin && (
                     <ListItem>
                       <Link to="/login" onClick={onClose}>
-                        Login
+                        <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                          Login
+                        </Text>
                       </Link>
                     </ListItem>
                   )}
@@ -319,24 +375,66 @@ const App = () => {
                 !hideAdd && (
                   <ListItem>
                     <Link to="/add-product" onClick={onClose}>
-                      Add New Product
+                      <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                        Add New Product
+                      </Text>
                     </Link>
                   </ListItem>
                 )}
               {user?.role === "admin" && !hideAdd && (
                 <ListItem>
                   <Link to="/users" onClick={onClose}>
-                    Users
+                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                      Users
+                    </Text>
                   </Link>
                 </ListItem>
               )}
               {user && !hideLogout && (
                 <ListItem>
                   <Link to="/logout" onClick={onClose}>
-                    Logout
+                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                      logout
+                    </Text>
                   </Link>
                 </ListItem>
               )}
+              <ListItem>
+                <ChakraLink
+                  as={Link}
+                  to="/browse-by-brand"
+                  transition="all 0.2s"
+                  _hover={{
+                    transform: "scale(1.02)",
+                    textDecoration: "none",
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                >
+                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                    Brands
+                  </Text>
+                </ChakraLink>
+              </ListItem>
+              <ListItem>
+                <ChakraLink
+                  as={Link}
+                  to="/browse-by-category"
+                  transition="all 0.2s"
+                  _hover={{
+                    transform: "scale(1.02)",
+                    textDecoration: "none",
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                >
+                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                    Categories
+                  </Text>
+                </ChakraLink>
+              </ListItem>
             </List>
           </DrawerBody>
         </DrawerContent>
@@ -352,10 +450,12 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/transact" element={<Checkout user={user} />} />
         <Route path="/verify-payment" element={<VerifyPayment />} />
-        <Route path="/forget-password" element={<ProductReviews />} />
+        <Route path="/add-review" element={<AddReview />} />
+        <Route path="/update-review/:productId" element={<UpdateReview />} />
         <Route
           path="/browse-by-brand"
           element={<BrandProductSelector />}
@@ -366,7 +466,16 @@ const App = () => {
           element={<CategoryProductSelector />}
         />
         <Route
-          path="//user/:userId"
+          path="/update-product/:productId"
+          element={
+            <ProtectedRoute
+              element={<UpdateProduct />}
+              roles={["admin", "staff"]}
+            />
+          }
+        />
+        <Route
+          path="/user/:userId"
           element={
             <ProtectedRoute element={<UserDetails />} roles={["admin"]} />
           }

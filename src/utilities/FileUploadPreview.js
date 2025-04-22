@@ -61,7 +61,7 @@ const FileUploadPreview = ({ onFilesChange }) => {
       <input {...getInputProps()} />
       <VStack spacing={3}>
         <Text fontSize="md" color="gray.600">
-          Upload Images (jpeg/png)
+          Upload Or drag Images (jpg/jpeg/png)
         </Text>
         <SimpleGrid columns={[2, 3]} spacing={2}>
           {previews.map(({ preview }, idx) => (

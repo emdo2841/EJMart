@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,105 +9,90 @@ import {
   Heading,
   Alert,
   AlertIcon,
-    useToast,
-  Flex
+  useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import api from "./context/api";
-import { AuthContext } from "./context/authContext";
+import api from "./context/api"; // Axios instance
 
-const ForgetPassword = () => {
-  const { setUser } = useContext(AuthContext);
-  const [formData, setFormData] = useState({
-    email: ""
-  });
+const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
-   const handleChange = (e) => {
-     const { name, value } = e.target;
-     setFormData({ ...formData, [name]: value });
-   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const res = await api.post(
-        "/auth/forgot-password",
-        {
-          email: formData.email
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      // Send email to backend to request password reset
+      const response = await api.post("/auth/forgot-password", { email });
 
-      if (res.data.success) {
+      if (response.data.message) {
         toast({
-          title: "reset link and toke sent to your email",
-          description: "Please check your inbox",
+          title: "Password Reset Email Sent",
+          description: response.data.message,
           status: "success",
           duration: 4000,
           isClosable: true,
         });
-
-        setUser(res.data.user);
-        navigate("/reset-passord"); // redirect after login
+        navigate("/"); // Redirect to login or another page
       }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Login failed");
+      console.log(err)
+      setError(err.response?.data?.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
     }
   };
 
-    return (
-      <Flex
-        minHeight="80vh"
-        justify="center"
-        align="center"
-        bg="gray.50" // optional background
+  return (
+    <Flex minHeight="80vh" justify="center" align="center" bg="gray.50">
+      <Box
+        w={["70%", "60%", "400px"]}
+        mx="auto"
+        p={6}
+        boxShadow="md"
+        borderRadius="md"
       >
-        <Box
-          w={["70%", "60%", "400px"]}
-          mx="auto"
-          p={6}
-          boxShadow="md"
-          borderRadius="md"
-        >
-          <Heading mb={6} textAlign="center">
-            Forgot Password
-          </Heading>
+        <Heading mb={6} textAlign="center">
+          Forgot Password
+        </Heading>
 
-          {error && (
-            <Alert status="error" mb={4}>
-              <AlertIcon />
-              {error}
-            </Alert>
-          )}
+        {error && (
+          <Alert status="error" mb={4}>
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
 
-          <form onSubmit={handleSubmit}>
-            <VStack spacing={6}>
-              <FormControl isRequired>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </FormControl>
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={6}>
+            <FormControl isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </FormControl>
 
-              <Button type="submit" colorScheme="blue" width="full">
-                Login
-              </Button>
-            </VStack>
-          </form>
-        </Box>
-      </Flex>
-    );
+            <Button
+              type="submit"
+              colorScheme="blue"
+              width="full"
+              isLoading={loading}
+            >
+              Submit
+            </Button>
+          </VStack>
+        </form>
+      </Box>
+    </Flex>
+  );
 };
 
-export default ForgetPassword;
+export default ForgotPassword;
