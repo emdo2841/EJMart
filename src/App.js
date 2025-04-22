@@ -450,7 +450,7 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/transact" element={<Checkout user={user} />} />
         <Route path="/verify-payment" element={<VerifyPayment />} />
