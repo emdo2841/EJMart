@@ -45,11 +45,15 @@ import UserDetails from "./getUser";
 import UpdateUserRole from "./updateRole";
 import BrandProductSelector from "./brandProduct";
 import CategoryProductSelector from "./categoryProduct";
-import AddReview from "./AddReview"
+import AddReview from "./AddReview";
 import UpdateReview from "./UpdateReview";
 import UpdateProduct from "./update";
 import OutOfStockProducts from "./OutOfStock";
-import FlashSale from "./FlashSale"
+import FlashSale from "./FlashSale";
+import AddProductImage from "./EditImages";
+import ReplaceProductImage from "./ReplaceProductImages";
+import RemoveProductImages from "./RemoveProductImage"
+
 const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
 // Define theme
 
@@ -478,6 +482,33 @@ const App = () => {
           element={
             <ProtectedRoute
               element={<UpdateProduct />}
+              roles={["admin", "staff"]}
+            />
+          }
+        />
+        <Route
+          path="/add-product-image/:productId"
+          element={
+            <ProtectedRoute
+              element={<AddProductImage />}
+              roles={["admin", "staff"]}
+            />
+          }
+        />
+        <Route
+          path="/replace-product-image/:productId"
+          element={
+            <ProtectedRoute
+              element={<ReplaceProductImage />}
+              roles={["admin", "staff"]}
+            />
+          }
+        />
+        <Route
+          path="/remove-image/:productId"
+          element={
+            <ProtectedRoute
+              element={<RemoveProductImages />}
               roles={["admin", "staff"]}
             />
           }

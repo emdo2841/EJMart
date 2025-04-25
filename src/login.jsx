@@ -26,7 +26,7 @@ const LoginForm = () => {
     rememberMe: false,
   });
   const [error, setError] = useState("");
-
+  const [loading, setLoading] =useState(false)
   const toast = useToast();
   const navigate = useNavigate();
   const cardBg = useColorModeValue("gray.50", "gray.800");
@@ -44,15 +44,13 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const res = await api.post(
-        "/auth/login",
-        {
-          email: formData.email,
-          password: formData.password,
-        },
-      );
+      const res = await api.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
 
       if (res.data.accessToken) {
         localStorage.setItem("accessToken", res.data.accessToken); // or use sessionStorage
@@ -68,10 +66,11 @@ const LoginForm = () => {
 
         navigate("/");
       }
-
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,7 +88,6 @@ const LoginForm = () => {
         boxShadow="md"
         borderRadius="md"
         bg={cardBg}
-       
       >
         <Heading mb={6} textAlign="center">
           Login
@@ -131,7 +129,12 @@ const LoginForm = () => {
               Remember Me
             </Checkbox>
 
-            <Button type="submit" colorScheme="blue" width="full">
+            <Button
+              type="submit"
+              colorScheme="blue"
+              width="full"
+              isLoading={loading}
+            >
               Login
             </Button>
           </VStack>
@@ -142,6 +145,7 @@ const LoginForm = () => {
           onClick={() => navigate(`/forget-password`)}
           width="full"
           mt={4}
+          // isLoading={loading}
         >
           Forget Password?
         </Button>

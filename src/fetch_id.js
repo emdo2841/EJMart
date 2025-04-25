@@ -26,8 +26,6 @@
 // import { useColorModeValue } from "@chakra-ui/react";
 // import { useNavigate } from "react-router-dom";
 
-
-
 // const ProductDetails = () => {
 //   const { addToCart } = useCart();
 //   const { id } = useParams();
@@ -62,7 +60,7 @@
 
 //   useEffect(() => {
 //     fetchProductById();
-    
+
 //   }, [fetchProductById]);
 
 //   const renderStars = (rating) => {
@@ -275,7 +273,7 @@
 //           >
 //             Add to Cart
 //           </Button>
-//           {/* 
+//           {/*
 //           <Button
 //             mt="4"
 //             colorScheme="blue"
@@ -587,7 +585,32 @@ const ProductDetails = () => {
               </HStack>
             </>
           )}
-
+          <Flex>
+            {user?.role === "admin" && (
+              <Tooltip label="Edit" hasArrow>
+                <IconButton
+                  icon={<MdEdit />}
+                  colorScheme="blue"
+                  variant="ghost"
+                  onClick={() => {
+                    navigate(`/add-product-image/${product._id}`);
+                  }}
+                  aria-label="add or edit image"
+                />
+              </Tooltip>
+            )}
+            {user?.role === "admin" && (
+              <Tooltip label="Delete Images" hasArrow>
+                <IconButton
+                  icon={<DeleteIcon />}
+                  colorScheme="red"
+                  variant="ghost"
+                  onClick={() => navigate(`/remove-image/${product._id}`)}
+                  aria-label="delete images"
+                />
+              </Tooltip>
+            )}
+          </Flex>
           <Text fontSize="2xl" color={textColor} fontWeight="bold">
             {product.name}
           </Text>
@@ -610,7 +633,7 @@ const ProductDetails = () => {
           </Text>
 
           <Text fontWeight="bold" mt="2" color={textColor}>
-            {product.averageRating || "No rating yet."}
+            Rating: {renderStars(product.averageRating || "No rating yet.")}
           </Text>
 
           {product.reviews?.length > 0 ? (
@@ -671,39 +694,40 @@ const ProductDetails = () => {
             <Text>No reviews yet.</Text>
           )}
           <Flex>
-          {user?.role === "admin" && (
-            <Tooltip label="Edit" hasArrow>
-              <IconButton
-                icon={<MdEdit />}
-                colorScheme="blue"
-                variant="ghost"
-                onClick={() => {
-                  navigate(`/update-product/${product._id}`);
-                }}
-                aria-label="Edit"
-              />
-            </Tooltip>
-          )}
-          <Button
-            colorScheme="green"
-            onClick={() => addToCart(product)}
-            mt="1"
-            size="xs"
-          >
-            Add to Cart
-          </Button>
-
-          {user?.role === "admin" && (
-            <IconButton
-              icon={<DeleteIcon />}
-              aria-label="Delete Product"
-              colorScheme="red"
-              size="sm"
-              mt="2"
-              onClick={() => setIsDialogOpen(true)}
-            />
+            {user?.role === "admin" && (
+              <Tooltip label="Edit" hasArrow>
+                <IconButton
+                  icon={<MdEdit />}
+                  colorScheme="blue"
+                  variant="ghost"
+                  onClick={() => {
+                    navigate(`/update-product/${product._id}`);
+                  }}
+                  aria-label="Edit"
+                />
+              </Tooltip>
             )}
-            </Flex>
+
+            <Button
+              colorScheme="green"
+              onClick={() => addToCart(product)}
+              mt="1"
+              size="xs"
+            >
+              Add to Cart
+            </Button>
+
+            {user?.role === "admin" && (
+              <IconButton
+                icon={<DeleteIcon />}
+                aria-label="Delete Product"
+                colorScheme="red"
+                size="sm"
+                mt="2"
+                onClick={() => setIsDialogOpen(true)}
+              />
+            )}
+          </Flex>
 
           {!loading && user && (
             <AddReview productId={product._id} onSuccess={fetchProductById} />

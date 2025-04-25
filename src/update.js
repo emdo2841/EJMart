@@ -1,367 +1,89 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   Box,
-//   Center,
-//   Input,
-//   Button,
-//   FormLabel,
-//   Select,
-//   Image,
-//   Checkbox,
-//   SimpleGrid,
-//   Spinner,
-//   useToast,
-//   useColorModeValue,
-//   Stack,
-// } from "@chakra-ui/react";
-// import { useForm } from "react-hook-form";
-// import { useParams, useNavigate } from "react-router-dom";
-// import api from "../src/context/api";
-
-// const UpdateProduct = () => {
-//   const { productId } = useParams();
-//   const navigate = useNavigate();
-//   const { register, handleSubmit, reset } = useForm();
-//   const toast = useToast();
-
-//   const bg = useColorModeValue("white", "gray.700");
-//   const border = useColorModeValue("gray.200", "gray.600");
-
-//   const [product, setProduct] = useState(null);
-//   const [categories, setCategories] = useState([]);
-//   const [brands, setBrands] = useState([]);
-//   const [selectedImages, setSelectedImages] = useState([]);
-//   const [imagesToRemove, setImagesToRemove] = useState([]);
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-
-//   useEffect(() => {
-//     const fetchInitialData = async () => {
-//       try {
-//         const [prodRes, catRes, brandRes] = await Promise.all([
-//           api.get(`/product/${productId}`),
-//           api.get("/category?page=1&limit=100"),
-//           api.get("/brand?page=1&limit=100"),
-//         ]);
-//         const product = prodRes.data;
-
-//         reset({
-//           ...product,
-//           category: product.category?._id,
-//           brand: product.brand?._id,
-//         });
-
-//         setProduct(product);
-//         setSelectedImages(product.images || []);
-//         setCategories(catRes.data.data);
-//         setBrands(brandRes.data.data);
-//       } catch (err) {
-//         toast({
-//           title: "Error",
-//           description: "Failed to load product or supporting data.",
-//           status: "error",
-//           duration: 5000,
-//           isClosable: true,
-//         });
-//       }
-//     };
-
-//     fetchInitialData();
-//   }, [productId, reset, toast]);
-
-//   const toggleImageRemoval = (imgUrl) => {
-//     setImagesToRemove((prev) =>
-//       prev.includes(imgUrl)
-//         ? prev.filter((i) => i !== imgUrl)
-//         : [...prev, imgUrl]
-//     );
-//   };
-
-//   const onSubmit = async (formData) => {
-//     const data = new FormData();
-//     for (const [key, value] of Object.entries(formData)) {
-//       if (key !== "images") {
-//         data.append(key, value);
-//       }
-//     }
-
-//     if (formData.images && formData.images.length > 0) {
-//       for (const file of formData.images) {
-//         data.append("images", file);
-//       }
-//     }
-
-//     if (imagesToRemove.length > 0) {
-//       for (const url of imagesToRemove) {
-//         data.append("imagesToRemove", url);
-//       }
-//     }
-
-//     setIsSubmitting(true);
-//     try {
-//       const res = await api.put(`/product/${productId}`, data, {
-//         headers: { "Content-Type": "multipart/form-data" },
-//         withCredentials: true,
-//       });
-
-//       toast({
-//         title: "Success!",
-//         description: "Product updated successfully.",
-//         status: "success",
-//         duration: 3000,
-//         isClosable: true,
-//       });
-
-//       setProduct(res.data.data);
-//       setImagesToRemove([]);
-//       navigate(`/product/${productId}`);
-//     } catch (error) {
-//       toast({
-//         title: "Update failed",
-//         description: error.response?.data?.details || error.message,
-//         status: "error",
-//         duration: 5000,
-//         isClosable: true,
-//       });
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
-
-//   if (!product) return <Center mt={10}><Spinner size="xl" /></Center>;
-
-//   return (
-//     <Center>
-//       <Box
-//         as="form"
-//         onSubmit={handleSubmit(onSubmit)}
-//         p="6"
-//         mt={10}
-//         w={["70%", "60%", "400px"]}
-//         borderWidth="1px"
-//         borderRadius="md"
-//         boxShadow="lg"
-//         bg={bg}
-//         borderColor={border}
-//       >
-//         <Stack spacing={4}>
-//           <FormLabel>Name</FormLabel>
-//           <Input {...register("name")} placeholder="Product Name" />
-
-//           <FormLabel>Description</FormLabel>
-//           <Input {...register("description")} placeholder="Description" />
-
-//           <FormLabel>Price</FormLabel>
-//           <Input type="number" step="0.01" {...register("price")} />
-
-//           <FormLabel>Discounted Price</FormLabel>
-//           <Input type="number" step="0.01" {...register("discountedPrice")} />
-
-//           <FormLabel>Stock</FormLabel>
-//           <Input type="number" {...register("stock")} />
-
-//           <FormLabel>Color</FormLabel>
-//           <Input {...register("color")} placeholder="Color (optional)" />
-
-//           <FormLabel>Size</FormLabel>
-//           <Input {...register("size")} placeholder="Size (optional)" />
-
-//           <FormLabel>Category</FormLabel>
-//           <Select {...register("category")}>
-//             <option value="">Select Category</option>
-//             {categories.map((cat) => (
-//               <option value={cat._id} key={cat._id}>
-//                 {cat.name}
-//               </option>
-//             ))}
-//           </Select>
-
-//           <FormLabel>Brand</FormLabel>
-//           <Select {...register("brand")}>
-//             <option value="">Select Brand</option>
-//             {brands.map((brand) => (
-//               <option value={brand._id} key={brand._id}>
-//                 {brand.name}
-//               </option>
-//             ))}
-//           </Select>
-
-//           <FormLabel>Upload New Images</FormLabel>
-//           <Input type="file" multiple {...register("images")} />
-
-//           <FormLabel>Current Images (click to mark for deletion)</FormLabel>
-//           <SimpleGrid columns={[2, 3]} spacing={2}>
-//             {selectedImages.map((img) => (
-//               <Box key={img} textAlign="center">
-//                 <Image
-//                   src={img}
-//                   alt="product"
-//                   border={imagesToRemove.includes(img) ? "2px solid red" : "1px solid gray"}
-//                   borderRadius="md"
-//                   cursor="pointer"
-//                   onClick={() => toggleImageRemoval(img)}
-//                 />
-//                 <Checkbox
-//                   mt={1}
-//                   isChecked={imagesToRemove.includes(img)}
-//                   onChange={() => toggleImageRemoval(img)}
-//                 >
-//                   Remove
-//                 </Checkbox>
-//               </Box>
-//             ))}
-//           </SimpleGrid>
-
-//           <Button
-//             type="submit"
-//             colorScheme="green"
-//             isLoading={isSubmitting}
-//           >
-//             Submit
-//           </Button>
-//         </Stack>
-//       </Box>
-//     </Center>
-//   );
-// };
-
-// export default UpdateProduct;
-import React, { useEffect, useState } from "react";
+// components/UpdateProductFields.jsx
 import {
   Box,
-  Center,
-  Input,
   Button,
+  Center,
   FormLabel,
+  Input,
   Select,
-  Image,
-  Checkbox,
-  SimpleGrid,
   Spinner,
+  Stack,
   useToast,
   useColorModeValue,
-  Stack,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../src/context/api";
-import FileUploadPreview from "./utilities/FileUploadPreview"; // adjust the path if needed
 
-
-const UpdateProduct = () => { 
+const UpdateProductFields = () => {
   const { productId } = useParams();
-  const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm();
-  const [newImage, setNewImage] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const bg = useColorModeValue("white", "gray.700");
   const border = useColorModeValue("gray.200", "gray.600");
 
-  const [product, setProduct] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [imagesToRemove, setImagesToRemove] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchData = async () => {
       try {
         const [prodRes, catRes, brandRes] = await Promise.all([
           api.get(`/product/${productId}`),
           api.get("/category?page=1&limit=100"),
           api.get("/brand?page=1&limit=100"),
         ]);
-        const product = prodRes.data;
 
         reset({
-          ...product,
-          category: product.category?._id,
-          brand: product.brand?._id,
+          ...prodRes.data,
+          category: prodRes.data.category?._id,
+          brand: prodRes.data.brand?._id,
         });
-
-        setProduct(product);
-        setSelectedImages(product.images || []);
         setCategories(catRes.data.data);
         setBrands(brandRes.data.data);
       } catch (err) {
         toast({
-          title: "Error",
-          description: "Failed to load product or supporting data.",
+          title: "Failed to load product data",
           status: "error",
           duration: 5000,
           isClosable: true,
         });
+      } finally {
+        setIsLoading(false);
       }
     };
-
-    fetchInitialData();
+    fetchData();
   }, [productId, reset, toast]);
 
-  const toggleImageRemoval = (imgUrl) => {
-    setImagesToRemove((prev) =>
-      prev.includes(imgUrl)
-        ? prev.filter((i) => i !== imgUrl)
-        : [...prev, imgUrl]
-    );
-  };
-
-  const onSubmit = async (formData) => {
-    const data = new FormData();
-    for (const [key, value] of Object.entries(formData)) {
-      if (key !== "images") {
-        data.append(key, value);
-      }
-    }
-
-    if (newImage) {
-      data.append("images", newImage);
-    }
-
-
-    if (imagesToRemove.length > 0) {
-      for (const url of imagesToRemove) {
-        data.append("imagesToRemove", url);
-      }
-    }
-
-    setIsSubmitting(true);
+  const onSubmit = async (data) => {
+    setLoading(true);
     try {
-      const res = await api.put(`/product/${productId}`, data, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-
-      // ✅ Force image state update from server response
-      const updatedProduct = res.data.data;
-      console.log("Updated product:", updatedProduct);
-
+      await api.patch(`/product/${productId}`, data);
       toast({
-        title: "Success!",
-        description: "Product updated successfully.",
+        title: "Product fields updated",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
-
-      setProduct(updatedProduct);
-      setSelectedImages(updatedProduct.images || []); // ✅ Update selected images
-      setImagesToRemove([]);
       navigate(`/product/${productId}`);
-    } catch (error) {
+    } catch (err) {
       toast({
         title: "Update failed",
-        description: error.response?.data?.details || error.message,
+        description: err.response?.data?.details || err.message,
         status: "error",
         duration: 5000,
         isClosable: true,
       });
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
-  if (!product)
+  if (isLoading)
     return (
       <Center mt={10}>
         <Spinner size="xl" />
@@ -373,7 +95,7 @@ const UpdateProduct = () => {
       <Box
         as="form"
         onSubmit={handleSubmit(onSubmit)}
-        p="6"
+        p={6}
         mt={10}
         w={["90%", "70%", "500px"]}
         borderWidth="1px"
@@ -382,12 +104,12 @@ const UpdateProduct = () => {
         bg={bg}
         borderColor={border}
       >
-        <Stack spacing={2 }>
+        <Stack spacing={4}>
           <FormLabel>Name</FormLabel>
-          <Input {...register("name")} placeholder="Product Name" />
+          <Input {...register("name")} />
 
           <FormLabel>Description</FormLabel>
-          <Input {...register("description")} placeholder="Description" />
+          <Input {...register("description")} />
 
           <FormLabel>Price</FormLabel>
           <Input type="number" step="0.01" {...register("price")} />
@@ -399,16 +121,16 @@ const UpdateProduct = () => {
           <Input type="number" {...register("stock")} />
 
           <FormLabel>Color</FormLabel>
-          <Input {...register("color")} placeholder="Color (optional)" />
+          <Input {...register("color")} />
 
           <FormLabel>Size</FormLabel>
-          <Input {...register("size")} placeholder="Size (optional)" />
+          <Input {...register("size")} />
 
           <FormLabel>Category</FormLabel>
           <Select {...register("category")}>
             <option value="">Select Category</option>
             {categories.map((cat) => (
-              <option value={cat._id} key={cat._id}>
+              <option key={cat._id} value={cat._id}>
                 {cat.name}
               </option>
             ))}
@@ -418,48 +140,14 @@ const UpdateProduct = () => {
           <Select {...register("brand")}>
             <option value="">Select Brand</option>
             {brands.map((brand) => (
-              <option value={brand._id} key={brand._id}>
+              <option key={brand._id} value={brand._id}>
                 {brand.name}
               </option>
             ))}
           </Select>
 
-          
-
-          <FormLabel>Upload New Image</FormLabel>
-          <FileUploadPreview setImage={setNewImage} />
-
-          <FormLabel>Current Images (click to mark for deletion)</FormLabel>
-          <SimpleGrid columns={[2, 3]} spacing={2}>
-            {selectedImages.map((img) => (
-              <Box key={img} textAlign="center">
-                <Image
-                  src={img}
-                  alt="product"
-                  border={
-                    imagesToRemove.includes(img)
-                      ? "2px solid red"
-                      : "1px solid gray"
-                  }
-                  borderRadius="md"
-                  cursor="pointer"
-                  onClick={() => toggleImageRemoval(img)}
-                  boxSize="100px"
-                  objectFit="cover"
-                />
-                <Checkbox
-                  mt={1}
-                  isChecked={imagesToRemove.includes(img)}
-                  onChange={() => toggleImageRemoval(img)}
-                >
-                  Remove
-                </Checkbox>
-              </Box>
-            ))}
-          </SimpleGrid>
-
-          <Button type="submit" colorScheme="green" isLoading={isSubmitting}>
-            Submit
+          <Button colorScheme="teal" type="submit" isLoading={loading}>
+            Update Fields
           </Button>
         </Stack>
       </Box>
@@ -467,4 +155,4 @@ const UpdateProduct = () => {
   );
 };
 
-export default UpdateProduct;
+export default UpdateProductFields;

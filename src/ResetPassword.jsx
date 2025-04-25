@@ -77,7 +77,7 @@ const ResetPassword = () => {
 
     try {
       // Send email to backend to request password reset
-      const response = await api.post(`/auth/reset-password${token}`, { password });
+      const response = await api.put(`/auth/reset-password${token}`, { password });
 
       if (response.data.message) {
         toast({
@@ -122,7 +122,7 @@ const ResetPassword = () => {
             <FormControl isRequired>
               <FormLabel>New Password</FormLabel>
               <Input
-                type="paswword"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
