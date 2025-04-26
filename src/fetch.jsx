@@ -350,15 +350,15 @@ const Products = () => {
       {products.length > 0 ? (
         <Grid
           templateColumns={{
-            base: "repeat(3, 1fr)",
-            sm: "repeat(3, 1fr)",
-            md: "repeat(4, 1fr)",
-            lg: "repeat(5, 1fr)",
-            xl: "repeat(7, 1fr)",
+            base: "repeat(4, 1fr)",
+            sm: "repeat(5, 1fr)",
+            md: "repeat(6, 1fr)",
+            lg: "repeat(7, 1fr)",
+            xl: "repeat(10, 1fr)",
           }}
           gap={4}
           w="full"
-          maxW="1200px"
+          maxW="1500px"
           p={{ base: "2", md: "4" }}
         >
           {products.map((product) => (
@@ -369,7 +369,7 @@ const Products = () => {
               borderColor="gray.300"
               borderRadius="md"
               textAlign="center"
-              minH="200px"
+              minH="150px"
               shadow="md"
               transition="all 0.2s"
               _hover={{ shadow: "lg", transform: "scale(1.02)" }}

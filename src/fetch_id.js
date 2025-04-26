@@ -566,7 +566,7 @@ const ProductDetails = () => {
                   <Image
                     key={idx}
                     src={img}
-                    boxSize="60px"
+                    boxSize="80px"
                     objectFit="cover"
                     borderRadius="md"
                     border={
@@ -579,7 +579,8 @@ const ProductDetails = () => {
                       setSelectedImage(img);
                       handleImageClick(img);
                     }}
-                    _hover={{ opacity: 0.8 }}
+                    transition="all 0.2s"
+                    _hover={{ shadow: "lg", transform: "scale(1.02)" }}
                   />
                 ))}
               </HStack>
@@ -633,13 +634,14 @@ const ProductDetails = () => {
           </Text>
 
           <Text fontWeight="bold" mt="2" color={textColor}>
-            Rating: {renderStars(product.averageRating || "No rating yet.")}
+            Rating:
           </Text>
+          {renderStars(product.averageRating || "No rating yet.")}
 
           {product.reviews?.length > 0 ? (
             <Box w="100%" mt="4">
               <Text fontWeight="bold" mb="2" color={textColor}>
-                Customer Reviews:
+                <Center>Customer Reviews</Center>
               </Text>
               {product.reviews.slice(0, visibleReviews).map((review, idx) => (
                 <Box key={idx} p="3" borderWidth="1px" borderRadius="md" mb="2">

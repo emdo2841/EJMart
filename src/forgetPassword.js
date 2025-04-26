@@ -39,7 +39,7 @@ const ForgotPassword = () => {
           duration: 4000,
           isClosable: true,
         });
-        navigate("/"); // Redirect to login or another page
+        navigate("/login"); // Redirect to login or another page
       }
     } catch (err) {
       console.log(err)

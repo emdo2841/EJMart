@@ -62,7 +62,7 @@ const UpdateProductFields = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await api.patch(`/product/${productId}`, data);
+      await api.put(`/product/${productId}`, data);
       toast({
         title: "Product fields updated",
         status: "success",
