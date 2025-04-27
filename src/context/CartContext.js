@@ -1,33 +1,4 @@
-// // src/context/CartContext.js
-// import React, { createContext, useContext, useState } from "react";
 
-// // Create Context
-// const CartContext = createContext();
-
-// // Cart Provider
-// export const CartProvider = ({ children }) => {
-//   const [cart, setCart] = useState([]);
-
-//   const addToCart = (product) => {
-//     setCart((prev) => [...prev, product]);
-//   };
-
-//   const removeFromCart = (productId) => {
-//     setCart((prev) => prev.filter((item) => item._id !== productId));
-//   };
-
-//   return (
-//     <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
-//       {children}
-//     </CartContext.Provider>
-//   );
-// };
-
-// // Custom hook to use Cart
-// export const useCart = () => {
-//   return useContext(CartContext);
-// };
-// src/context/CartContext.js
 import React, { createContext, useContext, useState } from 'react';
 
 // Create Context
@@ -75,9 +46,12 @@ export const CartProvider = ({ children }) => {
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.discountedPrice * item.quantity, 0);
   };
+  const clearCart = () => {
+    setCart([]);
+  };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, getTotalPrice }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, getTotalPrice,clearCart }}>
       {children}
     </CartContext.Provider>
   );

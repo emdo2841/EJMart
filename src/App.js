@@ -222,7 +222,6 @@ const App = () => {
                   alignItems="center"
                   gap={2}
                 >
-                  
                   <Text fontSize="lg" fontWeight="bold" color="blue.600">
                     Re-STock
                   </Text>
@@ -305,29 +304,6 @@ const App = () => {
           <DrawerHeader>EJ</DrawerHeader>
           <DrawerBody>
             <List spacing={4}>
-              {/* {!user && (
-                <>
-                  {!hideSignup && (
-                    <ListItem>
-                      <Link to="/form" onClick={onClose}>
-                        <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                          Signup
-                        </Text>
-                      </Link>
-                    </ListItem>
-                  )}
-                  {!hideLogin && (
-                    <ListItem>
-                      <Link to="/login" onClick={onClose}>
-                        <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                          Login
-                        </Text>
-                      </Link>
-                    </ListItem>
-                  )}
-                </>
-              )} */}
-
               <ListItem>
                 <Link to="/flash-sale" onClick={onClose}>
                   <Text fontSize="lg" fontWeight="bold" color="blue.600">
@@ -396,7 +372,10 @@ const App = () => {
         />
         <Route path="/cart" element={<Cart />} />
         <Route path="/transact" element={<Checkout user={user} />} />
-        <Route path="/verify-payment" element={<VerifyPayment />} />
+        <Route
+          path="/verify-payment/:reference"
+          element={<ProtectedRoute element={<VerifyPayment />} />}
+        />
         <Route path="/add-review" element={<AddReview />} />
         <Route path="/flash-sale" element={<FlashSale />} />
         <Route path="/update-review/:productId" element={<UpdateReview />} />
