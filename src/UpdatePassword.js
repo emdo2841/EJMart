@@ -26,7 +26,7 @@ const UpdatePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");   
     setLoading(true);
 
     try {
@@ -34,6 +34,9 @@ const UpdatePassword = () => {
         const response = await api.put(`/auth/update-password`, { oldPassword, newPassword });
 
       if (response.data.message) {
+        if (response.data.accessToken) {
+          localStorage.setItem("accessToken", response.data.accessToken);
+        }
         toast({
           title: "Password Changed successfully",
           description: response.data.message,

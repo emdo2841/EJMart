@@ -22,7 +22,7 @@ import {
 import { useColorMode } from "@chakra-ui/react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from "react-icons/fa";
+import { FaSignInAlt, FaUserPlus,  } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import Form from "./form";
@@ -53,7 +53,9 @@ import FlashSale from "./FlashSale";
 import AddProductImage from "./EditImages";
 import ReplaceProductImage from "./ReplaceProductImages";
 import RemoveProductImages from "./RemoveProductImage"
-
+import BrandDropdown from "./BrandDropdown";
+import CategoryDropdown from "./CategoryDrpdown";
+import Footer from "./Footer";
 const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
 // Define theme
 
@@ -70,7 +72,7 @@ const App = () => {
 
   const hideLogin = location.pathname.startsWith("/login");
   const hideSignup = location.pathname.startsWith("/signup");
-  const hideLogout = location.pathname.startsWith("/logout");
+  // const hideLogout = location.pathname.startsWith("/logout");
   const hideAdd = location.pathname.startsWith("/add-product");
   const showProductsOnRoot = location.pathname === "/";
 
@@ -199,40 +201,10 @@ const App = () => {
               </ListItem>
             )}
             <ListItem>
-              <ChakraLink
-                as={Link}
-                to="/browse-by-brand"
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                }}
-                display="flex"
-                alignItems="center"
-                gap={2}
-              >
-                <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                  Brands
-                </Text>
-              </ChakraLink>
+              <BrandDropdown />
             </ListItem>
             <ListItem>
-              <ChakraLink
-                as={Link}
-                to="/browse-by-category"
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                }}
-                display="flex"
-                alignItems="center"
-                gap={2}
-              >
-                <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                  Categories
-                </Text>
-              </ChakraLink>
+              <CategoryDropdown />
             </ListItem>
             {!user && (
               <>
@@ -318,26 +290,6 @@ const App = () => {
                 </Text>
               </ChakraLink>
             )}
-
-            {user && !hideLogout && (
-              <ChakraLink
-                as={Link}
-                to="/logout"
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                }}
-                display="flex"
-                alignItems="center"
-                gap={2}
-              >
-                <Icon as={FaSignOutAlt} boxSize={4} color="blue.500" />
-                <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                  Logout
-                </Text>
-              </ChakraLink>
-            )}
           </List>
           <DarkModeToggle />
         </Flex>
@@ -352,10 +304,10 @@ const App = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Menu</DrawerHeader>
+          <DrawerHeader>EJ</DrawerHeader>
           <DrawerBody>
             <List spacing={4}>
-              {!user && (
+              {/* {!user && (
                 <>
                   {!hideSignup && (
                     <ListItem>
@@ -376,7 +328,26 @@ const App = () => {
                     </ListItem>
                   )}
                 </>
-              )}
+              )} */}
+
+              <ListItem>
+                <Link to="/flash-sale" onClick={onClose}>
+                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                    Flash Sales
+                  </Text>
+                </Link>
+              </ListItem>
+              {user?.role &&
+                (user.role === "admin" || user.role === "staff") &&
+                !hideAdd && (
+                  <ListItem>
+                    <Link to="/out-of-stock" onClick={onClose}>
+                      <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                        Re-STock
+                      </Text>
+                    </Link>
+                  </ListItem>
+                )}
               {user?.role &&
                 (user.role === "admin" || user.role === "staff") &&
                 !hideAdd && (
@@ -397,50 +368,11 @@ const App = () => {
                   </Link>
                 </ListItem>
               )}
-              {user && !hideLogout && (
-                <ListItem>
-                  <Link to="/logout" onClick={onClose}>
-                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                      logout
-                    </Text>
-                  </Link>
-                </ListItem>
-              )}
               <ListItem>
-                <ChakraLink
-                  as={Link}
-                  to="/browse-by-brand"
-                  transition="all 0.2s"
-                  _hover={{
-                    transform: "scale(1.02)",
-                    textDecoration: "none",
-                  }}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                    Brands
-                  </Text>
-                </ChakraLink>
+                <BrandDropdown onClick={onClose} />
               </ListItem>
               <ListItem>
-                <ChakraLink
-                  as={Link}
-                  to="/browse-by-category"
-                  transition="all 0.2s"
-                  _hover={{
-                    transform: "scale(1.02)",
-                    textDecoration: "none",
-                  }}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                    Categories
-                  </Text>
-                </ChakraLink>
+                <CategoryDropdown onClick={onClose} />
               </ListItem>
             </List>
           </DrawerBody>
@@ -449,6 +381,8 @@ const App = () => {
 
       {/* Products shown on home route only */}
       {showProductsOnRoot && <Products />}
+
+      <Footer />
       {/* Routes */}
       <Routes>
         <Route path="/signup" element={<Form />} />
@@ -469,12 +403,12 @@ const App = () => {
         <Route path="/flash-sale" element={<FlashSale />} />
         <Route path="/update-review/:productId" element={<UpdateReview />} />
         <Route
-          path="/browse-by-brand"
+          path="/browse-by-brand/:id"
           element={<BrandProductSelector />}
         />{" "}
         {/* NEW LINE */}
         <Route
-          path="/browse-by-category"
+          path="/browse-by-category/:id"
           element={<CategoryProductSelector />}
         />
         <Route
@@ -569,11 +503,11 @@ const DarkModeToggle = () => {
     <Button
       onClick={toggleColorMode}
       position="fixed"
-      bottom="10px" // Adjust bottom distance as needed
-      right="10px" // Adjust right distance as needed
-      zIndex="999"
+      bottom="70px" // Adjust bottom distance as needed
+      right="5px" // Adjust right distance as needed
+      zIndex="1001"
     >
-      {colorMode === "light" ? "Dark Mode 🌙" : "Light Mode ☀️"}
+      {colorMode === "light" ? "Dark 🌙" : "Light ☀️"}
     </Button>
   );
 };

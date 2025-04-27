@@ -266,7 +266,7 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [limit] = useState(21);
+  const [limit] = useState(20);
   const [totalProducts, setTotalProducts] = useState(0);
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -466,7 +466,9 @@ const Products = () => {
         alignItems="center"
         justifyContent="center"
         gap="2"
+        pb="20"
       >
+      
         <Button
           isDisabled={page === 1}
           onClick={() => setPage((prev) => prev - 1)}
