@@ -77,7 +77,7 @@
 
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // <-- useParams instead of useSearchParams
+import { useParams, useNavigate } from "react-router-dom"; // <-- useParams instead of useSearchParams
 import { Box, Spinner, Text, Heading, VStack } from "@chakra-ui/react";
 import api from "./context/api";
 import { useCart } from "./context/CartContext";
@@ -85,7 +85,9 @@ import { useCart } from "./context/CartContext";
 const VerifyPayment = () => {
   const { reference } = useParams(); // <- get reference from URL
   const [status, setStatus] = useState("verifying");
+  const [countdown, setCountdown] = useState(3); 
   const { clearCart } = useCart();
+  const navigate = useNavigate(); // <-- initialize navigate
 
   useEffect(() => {
     const verify = async () => {
@@ -111,6 +113,18 @@ const VerifyPayment = () => {
       setStatus("invalid");
     }
   }, [reference, clearCart]);
+ useEffect(() => {
+   let timer;
+   if (status === "success" && countdown > 0) {
+     timer = setTimeout(() => {
+       setCountdown((prev) => prev - 1);
+     }, 1000);
+   } else if (status === "success" && countdown === 0) {
+     navigate("/"); // <-- redirect to home or orders page
+   }
+
+   return () => clearTimeout(timer);
+ }, [status, countdown, navigate]);
 
   return (
     <Box minH="80vh" display="flex" alignItems="center" justifyContent="center">
