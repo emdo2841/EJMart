@@ -10,12 +10,16 @@ import {
 import { Link } from "react-router-dom";
 import { FaHome, FaUser, FaSignOutAlt, FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { startTransition } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation} from "react-router-dom";
 import { useAuth } from "./context/authContext";
 
 const Footer = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+    const hideLogin = location.pathname.startsWith("/login");
+    const hideSignup = location.pathname.startsWith("/signup");
   return (
     <Flex
       as="footer"
@@ -39,7 +43,8 @@ const Footer = () => {
             <Text>Home</Text>
           </Flex>
         </ChakraLink>
-        {!user && (
+        {}
+        {!user && !hideLogin &&(
           <Button
             as={Link}
             to="/login"
@@ -50,7 +55,7 @@ const Footer = () => {
             Login
           </Button>
         )}
-        {!user && (
+        {!user && !hideSignup && (
           <Button
             as={Link}
             to="/signup"
