@@ -13,7 +13,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import api from "./context/api";
 
-const CategoryDropdown = () => {
+const CategoryDropdown = ({ onClick }) => {
   const [brands, setBrands] = useState([]);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const CategoryDropdown = () => {
       </MenuButton>
       <MenuList width="50px">
         {brands.map((category) => (
-          <MenuItem key={category._id}>
+          <MenuItem key={category._id} onClick={onClick}>
             <ChakraLink
               as={Link}
               to={`/browse-by-category/${category._id}`}

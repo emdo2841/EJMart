@@ -40,7 +40,7 @@ const BrandProductSelector = () => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const toast = useToast();
-
+  const [name, setName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const cancelRef = useRef();
@@ -49,8 +49,18 @@ const BrandProductSelector = () => {
   const fetchProducts = useCallback(async () => {
   try {
     const response = await api.get(`/category/category/${id}?page=${page}&limit=${limit}`);
-    setProducts(response.data.data || []);
+    const fetchedProducts = response.data.data || [];
+    setProducts(fetchedProducts);
     setTotalProducts(response.data.total || 0);
+    if (fetchedProducts.length > 0) {
+      if (fetchedProducts[0].category?.name) {
+          setName(fetchedProducts[0].category.name);
+        }else {
+          setName("Products"); // Fallback
+        }
+      }else {
+        setName("Products");
+      }
   } catch (error) {
     console.error(error)
     setError(error.response?.data?.message || error.message);
@@ -113,9 +123,9 @@ const BrandProductSelector = () => {
 
   return (
     <Center flexDir="column" p="4">
-      {/* <Text fontSize="2xl" fontWeight="bold" mb="4">
-        {category.name} 
-      </Text> */}
+      <Text fontSize="2xl" fontWeight="bold" mb="4">
+        { name } Products
+      </Text> 
 
       {products.length > 0 ? (
         <Grid

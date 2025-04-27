@@ -114,7 +114,7 @@ const OutOfStockProducts = () => {
   return (
     <Center flexDir="column" p="4">
       <Text fontSize="2xl" fontWeight="bold" mb="4">
-        Products
+        Out Of Stock
       </Text>
 
       {products.length > 0 ? (

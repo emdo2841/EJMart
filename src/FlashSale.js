@@ -114,7 +114,7 @@ const FlashSale = () => {
   return (
     <Center flexDir="column" p="4">
       <Text fontSize="2xl" fontWeight="bold" mb="4">
-        Products
+        Flash Sales
       </Text>
 
       {products.length > 0 ? (

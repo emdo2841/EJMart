@@ -22,7 +22,7 @@ import {
 import { useColorMode } from "@chakra-ui/react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { FaSignInAlt, FaUserPlus,  } from "react-icons/fa";
+// import { FaSignInAlt, FaUserPlus,  } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import Form from "./form";
@@ -70,8 +70,9 @@ const App = () => {
   const { user } = useAuth();
   const location = useLocation();
 
-  const hideLogin = location.pathname.startsWith("/login");
-  const hideSignup = location.pathname.startsWith("/signup");
+  const hideFlash = location.pathname.startsWith("/flash-sale");
+  const hideOut = location.pathname.startsWith("/out-of-stock");
+  // const hideSignup = location.pathname.startsWith("/signup");
   // const hideLogout = location.pathname.startsWith("/logout");
   const hideAdd = location.pathname.startsWith("/add-product");
   const showProductsOnRoot = location.pathname === "/";
@@ -206,47 +207,44 @@ const App = () => {
             <ListItem>
               <CategoryDropdown />
             </ListItem>
-            {!user && (
-              <>
-                {!hideSignup && (
-                  <ChakraLink
-                    as={Link}
-                    to="/signup"
-                    transition="all 0.2s"
-                    _hover={{
-                      transform: "scale(1.02)",
-                      textDecoration: "none",
-                    }}
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
-                  >
-                    <Icon as={FaUserPlus} boxSize={4} color="blue.500" />
-                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                      Signup
-                    </Text>
-                  </ChakraLink>
-                )}
-                {!hideLogin && (
-                  <ChakraLink
-                    as={Link}
-                    to="/login"
-                    transition="all 0.2s"
-                    _hover={{
-                      transform: "scale(1.02)",
-                      textDecoration: "none",
-                    }}
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
-                  >
-                    <Icon as={FaSignInAlt} boxSize={4} color="blue.500" />
-                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                      Login
-                    </Text>
-                  </ChakraLink>
-                )}
-              </>
+            {user?.role &&
+              (user.role === "admin" || user.role === "staff") &&
+              !hideOut && (
+                <ChakraLink
+                  as={Link}
+                  to="/out-of-stock"
+                  transition="all 0.2s"
+                  _hover={{
+                    transform: "scale(1.02)",
+                    textDecoration: "none",
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                >
+                  
+                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                    Re-STock
+                  </Text>
+                </ChakraLink>
+              )}
+            {!hideFlash && (
+              <ChakraLink
+                as={Link}
+                to="/flash-sale"
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                }}
+                display="flex"
+                alignItems="center"
+                gap={2}
+              >
+                <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                  Flash Sales
+                </Text>
+              </ChakraLink>
             )}
 
             {user?.role &&
