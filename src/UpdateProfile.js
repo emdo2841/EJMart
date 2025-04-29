@@ -1,25 +1,201 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+//  import React, { useState } from "react";
+// import { useNavigate, useParams } from "react-router-dom";
+// import {
+//   Box,
+//   Button,
+//   FormControl,
+//   Input,
+//   Heading,
+//   Alert,
+//   AlertIcon,
+//   useToast,
+//   Flex,
+//   FormLabel,
+//   VStack
+// } from "@chakra-ui/react";
+// import FileUploadPreview from "./fileUploadPreview";
+// import api from "./context/api";
+
+// const UpdateProfile = () => {
+//   const toast = useToast();
+//   const navigate = useNavigate();
+//   const { userId } = useParams();
+
+//   const [formData, setFormData] = useState({
+//     fullName: "",
+//     address: "",
+//     phone: "",
+//     image: null,
+//   });
+
+//   const [error, setError] = useState("");
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setError("");
+//     setIsLoading(true);
+
+//     if (!window.navigator.onLine) {
+//       setError("No internet connection. Please check your network.");
+//       setIsLoading(false);
+//       return;
+//     }
+
+//     const data = new FormData();
+//     Object.entries(formData).forEach(([key, value]) => {
+//       if (value) data.append(key, value);
+//     });
+
+//     try {
+//       const res = await api.put(`/auth/update-profile/${userId}`, data, {
+//         withCredentials: true,
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//       });
+
+//       if (res.data.success) {
+//         toast({
+//           title: "Success!",
+//           description: res.data.message,
+//           status: "success",
+//           duration: 5000,
+//           isClosable: true,
+//         });
+//         navigate("/profile");
+//       } else {
+//         throw new Error("Unexpected response");
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       toast({
+//         title: "Update failed",
+//         description:
+//           err.response?.data?.message ||
+//           "Something went wrong during update.",
+//         status: "error",
+//         duration: 3000,
+//         isClosable: true,
+//       });
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   return (
+//     <Flex minHeight="80vh" justify="center" align="center" bg="gray.50">
+//       <Box
+//         w={["90%", "70%", "400px"]}
+//         p={6}
+//         boxShadow="md"
+//         borderRadius="md"
+//         bg="white"
+//       >
+//         <Heading mb={4} textAlign="center" size="md">
+//           Update Profile
+//         </Heading>
+
+//         {error && (
+//           <Alert status="error" mb={4}>
+//             <AlertIcon />
+//             {error}
+//           </Alert>
+//         )}
+
+//         <form onSubmit={handleSubmit}>
+//           <VStack spacing={4}>
+//             <FormControl isRequired>
+//               <FormLabel>Full Name</FormLabel>
+//               <Input
+//                 name="fullName"
+//                 placeholder="Enter full name"
+//                 size="sm"
+//                 value={formData.fullName}
+//                 onChange={handleChange}
+//               />
+//             </FormControl>
+
+//             <FormControl isRequired>
+//               <FormLabel>Address</FormLabel>
+//               <Input
+//                 name="address"
+//                 placeholder="Enter address"
+//                 size="sm"
+//                 value={formData.address}
+//                 onChange={handleChange}
+//               />
+//             </FormControl>
+
+//             <FormControl isRequired>
+//               <FormLabel>Telephone</FormLabel>
+//               <Input
+//                 name="phone"
+//                 placeholder="Enter phone number"
+//                 type="tel"
+//                 size="sm"
+//                 value={formData.phone}
+//                 onChange={handleChange}
+//               />
+//             </FormControl>
+
+//             <FormControl>
+//               <FormLabel>Picture</FormLabel>
+//               <FileUploadPreview
+//                 setImage={(img) =>
+//                   setFormData((prev) => ({ ...prev, image: img }))
+//                 }
+//               />
+//             </FormControl>
+
+//             <Button
+//               type="submit"
+//               colorScheme="blue"
+//               width="full"
+//               isLoading={isLoading}
+//               loadingText="Updating"
+//             >
+//               Update Profile
+//             </Button>
+//           </VStack>
+//         </form>
+//       </Box>
+//     </Flex>
+//   );
+// };
+
+// export default UpdateProfile;
+
+
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
   FormControl,
   Input,
-  VStack,
   Heading,
   Alert,
   AlertIcon,
   useToast,
   Flex,
-  FormLabel
+  FormLabel,
+  VStack,
+  Spinner,
+  Image,
 } from "@chakra-ui/react";
-import FileUploadPreview from "./fileUploadPreview"; // Import the updated component
+import FileUploadPreview from "./fileUploadPreview";
 import api from "./context/api";
-import PasswordInput from "./components/PasswordInput"; // Import the PasswordInput component 
 
 const UpdateProfile = () => {
   const toast = useToast();
   const navigate = useNavigate();
+  const { userId } = useParams();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -27,76 +203,114 @@ const UpdateProfile = () => {
     phone: "",
     image: null,
   });
-
+  const [previewUrl, setPreviewUrl] = useState("");
   const [error, setError] = useState("");
+  const [isFetching, setIsFetching] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 1. Fetch existing user data on mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.get(`/auth/user/${userId}`, {
+          withCredentials: true,
+        });
+        const { fullName, address, phone, image } = res.data.user;
+        setFormData({ fullName, address, phone, image: null });
+        if (image) setPreviewUrl(image);
+      } catch (err) {
+        toast({
+          title: "Error loading profile",
+          description: err.response?.data?.message || "Could not fetch user",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchUser();
+  }, [userId, toast]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
-    // Check if the user is online
     if (!window.navigator.onLine) {
       setError("No internet connection. Please check your network.");
-      return; // Exit early if there's no connection
+      setIsSubmitting(false);
+      return;
     }
 
     const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) data.append(key, value);
+    Object.entries(formData).forEach(([key, val]) => {
+      if (val) data.append(key, val);
     });
 
     try {
-      const res = await api.update("/auth/update-profile", data, {
+      const res = await api.put(`/auth/update-profile/${userId}`, data, {
         withCredentials: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (res.data.success) {
         toast({
-          title: "Success!",
+          title: "Profile updated!",
           description: res.data.message,
           status: "success",
-          duration: 5000,
+          duration: 4000,
           isClosable: true,
         });
         navigate("/profile");
+      } else {
+        throw new Error("Update failed");
       }
     } catch (err) {
-      console.error(err);
       toast({
-        title: "Updating profile failed",
+        title: "Update failed",
         description:
-          error.response?.data?.message ||
-          "Something went wrong during update",
+          err.response?.data?.message || "Something went wrong during update.",
         status: "error",
-        duration: 3000,
+        duration: 4000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  if (isFetching) {
+    return (
+      <Flex minHeight="80vh" justify="center" align="center">
+        <Spinner size="xl" />
+      </Flex>
+    );
+  }
+
   return (
     <Flex
-      minHeight="80vh"
+      minHeight="100vh"
       justify="center"
       align="center"
-      bg="gray.50" // optional background
+      bg="gray.50"
+      pb="120px"
+      pt="20px"
     >
       <Box
-        w={["70%", "60%", "400px"]}
-        mx="auto"
+        w={["90%", "70%", "400px"]}
         p={6}
         boxShadow="md"
         borderRadius="md"
+        bg="white"  
       >
-        <Heading mb={2} textAlign="center" size="md">
+        <Heading mb={4} textAlign="center" size="md">
           Update Profile
         </Heading>
 
@@ -109,51 +323,70 @@ const UpdateProfile = () => {
 
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
-            <FormControl isRequired>
+            {/* Current Picture Preview */}
+            {previewUrl && (
+              <Image
+                src={previewUrl}
+                alt="Current profile"
+                boxSize="100px"
+                borderRadius="full"
+                objectFit="cover"
+                mb={2}
+                mx="auto"
+              />
+            )}
+
+            <FormControl>
               <FormLabel>Full Name</FormLabel>
               <Input
+                name="fullName"
                 placeholder="Enter full name"
                 size="sm"
-                name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
               />
-                      </FormControl>
-                      
-            <FormControl isRequired>
+            </FormControl>
+
+            <FormControl>
               <FormLabel>Address</FormLabel>
               <Input
-                placeholder="Enter address"
-                type="text"
-                size="sm"
                 name="address"
+                placeholder="Enter address"
+                size="sm"
                 value={formData.address}
                 onChange={handleChange}
               />
             </FormControl>
 
-            <FormControl isRequired>
+            <FormControl>
               <FormLabel>Telephone</FormLabel>
               <Input
+                name="phone"
                 placeholder="Enter phone number"
                 type="tel"
                 size="sm"
-                name="phone"
                 value={formData.phone}
                 onChange={handleChange}
               />
             </FormControl>
 
             <FormControl>
-              <FormLabel>Picture</FormLabel>
+              <FormLabel>Change Picture</FormLabel>
               <FileUploadPreview
-                setImage={(img) =>
-                  setFormData((prev) => ({ ...prev, image: img }))
-                }
+                setImage={(img) => {
+                  setFormData((prev) => ({ ...prev, image: img }));
+                  setPreviewUrl(URL.createObjectURL(img));
+                }}
               />
             </FormControl>
 
-            <Button type="submit" colorScheme="blue" width="full">
+            <Button
+              type="submit"
+              colorScheme="blue"
+              width="full"
+              isLoading={isSubmitting}
+              loadingText="Updating"
+            >
               Update Profile
             </Button>
           </VStack>
@@ -162,4 +395,5 @@ const UpdateProfile = () => {
     </Flex>
   );
 };
+
 export default UpdateProfile;

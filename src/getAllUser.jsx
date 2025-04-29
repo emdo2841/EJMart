@@ -1,38 +1,38 @@
+
 import api from "./context/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
+  Flex,
+  Box,
+  Button,
+  Center,
+  CircularProgress,
+  Text,
+  Badge,
+  useToast,
+  Image,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  Box,
-  Button,
-  Center,
-  List,
-  ListItem,
-  CircularProgress,
-  Text,
-  useToast,
-  Image,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./context/authContext";
-import { useRef } from "react";
 
 const GetAllUsers = () => {
-  const { user } = useAuth(); // Get logged-in user
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const toast = useToast();
   const [page, setPage] = useState(1);
-  const [limit] = useState(21); // Number of products per page
+  const [limit] = useState(20);
   const [totalUsers, setTotalUsers] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const navigate = useNavigate();
+  const toast = useToast();
   const cancelRef = useRef();
 
   useEffect(() => {
@@ -51,17 +51,13 @@ const GetAllUsers = () => {
           }
         );
 
-        // 🔥 Filter out the logged-in user
         const filteredUsers = response.data.users.filter(
           (u) => u._id !== user._id
         );
         setUsers(filteredUsers);
         setTotalUsers(response.data.total || 0);
       } catch (error) {
-        const errorMessage = error.response
-          ? error.response.data?.message || error.message
-          : error.message;
-
+        const errorMessage = error.response?.data?.message || error.message;
         toast({
           title: "Error",
           description: errorMessage,
@@ -84,7 +80,7 @@ const GetAllUsers = () => {
         withCredentials: true,
       });
 
-      setUsers(users.filter((u) => u._id !== selectedUserId));
+      setUsers((prev) => prev.filter((u) => u._id !== selectedUserId));
       setIsDialogOpen(false);
       setSelectedUserId(null);
     } catch (error) {
@@ -109,163 +105,128 @@ const GetAllUsers = () => {
     );
   }
 
-  if (error) return <p>Error: {error}</p>;
+  if (error)
+    return (
+      <Center>
+        <Text color="red.500">Error: {error}</Text>
+      </Center>
+    );
 
-  // Calculate the total number of pages
   const totalPages = Math.ceil(totalUsers / limit);
-  const handleUserClick = (userId) => {
-    navigate(`/user/${userId}`);
-  };
 
   return (
-    <Center>
-      <div>
-        <Center>
-          <Text fontSize="2xl" fontWeight="bold">
-            Users
-          </Text>
-        </Center>
-        {users.length > 0 ? (
-          <List>
-            {users.map((user) => {
-              // Convert binary data to Base64 if user.file exists
-              let imageUrl = "";
-              if (user.file && user.file.data) {
-                try {
-                  const base64String = btoa(
-                    new Uint8Array(user.file.data).reduce(
-                      (data, byte) => data + String.fromCharCode(byte),
-                      ""
-                    )
-                  );
-                  imageUrl = `data:${user.file.mimetype};base64,${base64String}`;
-                } catch (error) {
-                  console.error("Error converting image data:", error);
-                }
-              }
+    <Flex direction="column" align="center" p={4}>
+      <Text fontSize="2xl" fontWeight="bold" mb={6}>
+        Users
+      </Text>
 
-              return (
-                <Box
-                  p="4"
-                  borderWidth="1px"
-                  borderColor="gray.300"
-                  key={user._id}
-                  borderRadius="md"
-                  boxShadow="sm"
-                  mb="4"
+      {users.length > 0 ? (
+        <Flex wrap="wrap" justify="center" gap={6}>
+          {users.map((user) => (
+            <Box
+              key={user._id}
+              p={4}
+              w="250px"
+              borderWidth="1px"
+              borderColor="gray.300"
+              borderRadius="md"
+              boxShadow="md"
+              textAlign="center"
+            >
+              {user.image && (
+                <Image
+                  src={user.image}
+                  alt={`${user.fullName}'s profile`}
+                  borderRadius="full"
+                  boxSize="100px"
+                  objectFit="cover"
+                  mb={4}
+                  mx="auto"
+                />
+              )}
+              <Text fontWeight="semibold" mb={1}>
+                 {user.fullName}
+              </Text>
+              <Text fontSize="sm" color="gray.600" noOfLines={1}>
+               {user.email}
+              </Text>
+              <Badge fontSize="sm" color="gray.600" mb={3}>
+                {user.role}
+              </Badge>
+
+              <Flex gap={2} justify="center" mt={2}>
+                <Button
+                  colorScheme="green"
+                  size="sm"
+                  onClick={() => navigate(`/user/${user._id}`)}
                 >
-                  <ListItem>
-                    {imageUrl && (
-                      <Image
-                        src={imageUrl}
-                        alt={`${user.fullName}'s profile`}
-                        borderRadius="full"
-                        boxSize="100px"
-                        objectFit="cover"
-                        mb="2"
-                      />
-                    )}
-                    <h3>Name: {user.fullName}</h3>
-                    <p>Email: {user.email}</p>
-                    <p>Role: {user.role}</p>
-                    <Button
-                      colorScheme="green"
-                      onClick={() => handleUserClick(user._id)}
-                      color="white"
-                      _hover={{ bg: "green.600" }}
-                      variant="solid"
-                      size="md"
-                    >
-                      View User
-                    </Button>
+                  View
+                </Button>
 
-                    <Button
-                      colorScheme="red"
-                      onClick={() => {
-                        setSelectedUserId(user._id);
-                        setIsDialogOpen(true);
-                      }}
-                      color="white"
-                      _hover={{ bg: "red.600" }}
-                      variant="solid"
-                      size="md"
-                      ml="2"
-                    >
-                      Delete User
-                    </Button>
-                  </ListItem>
-                  <AlertDialog
-                    isOpen={isDialogOpen}
-                    leastDestructiveRef={cancelRef}
-                    onClose={() => setIsDialogOpen(false)}
-                  >
-                    <AlertDialogOverlay>
-                      <AlertDialogContent>
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                          Delete User
-                        </AlertDialogHeader>
+                <Button
+                  colorScheme="red"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedUserId(user._id);
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  Delete
+                </Button>
+              </Flex>
+            </Box>
+          ))}
+        </Flex>
+      ) : (
+        <Text>No users found</Text>
+      )}
 
-                        <AlertDialogBody>
-                          Are you sure you want to delete this user? This action
-                          cannot be undone.
-                        </AlertDialogBody>
-
-                        <AlertDialogFooter>
-                          <Button
-                            ref={cancelRef}
-                            onClick={() => setIsDialogOpen(false)}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            colorScheme="red"
-                            onClick={handleDelete}
-                            ml={3}
-                          >
-                            Delete
-                          </Button>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialogOverlay>
-                  </AlertDialog>
-                </Box>
-              );
-            })}
-          </List>
-        ) : (
-          <p>No users found</p>
-        )}
-      </div>
       {/* Pagination Controls */}
-      <Box
-        mt="4"
-        display="flex"
-        flexDirection={{ base: "column", sm: "row" }}
-        alignItems="center"
-        justifyContent="center"
-        gap="2"
-      >
+      <Flex mt={8} gap={4} align="center">
         <Button
-          isDisabled={page === 1}
           onClick={() => setPage((prev) => prev - 1)}
-          width={{ base: "100%", sm: "auto" }}
+          isDisabled={page === 1}
         >
           Previous
         </Button>
-
-        <Text fontSize="sm" mx="2">
+        <Text>
           Page {page} of {totalPages}
         </Text>
-
         <Button
           onClick={() => setPage((prev) => prev + 1)}
           isDisabled={page >= totalPages}
-          width={{ base: "100%", sm: "auto" }}
         >
           {page >= totalPages ? "Last" : "Next"}
         </Button>
-      </Box>
-    </Center>
+      </Flex>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        isOpen={isDialogOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setIsDialogOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete User
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure you want to delete this user? This action cannot be
+              undone.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </Flex>
   );
 };
 

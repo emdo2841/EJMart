@@ -103,10 +103,11 @@ const Form = () => {
 
   return (
     <Flex
-      minHeight="80vh"
+      minHeight="100vh"
       justify="center"
       align="center"
       bg={cardBg} // optional background
+      mb="40px"
     >
       <Box
         w={["70%", "60%", "400px"]}
@@ -116,6 +117,8 @@ const Form = () => {
         borderRadius="md"
         bg={cardBg}
         borderColor={cardBorder}
+        mt="4px"
+        mb="60px"
         
       >
         <Heading mb={2} textAlign="center" size="md">

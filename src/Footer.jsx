@@ -44,15 +44,20 @@ const Footer = () => {
           </Flex>
         </ChakraLink>
         {}
-        {!user && !hideLogin &&(
+        {!user && !hideLogin && (
           <Button
             as={Link}
             to="/login"
             size="xs"
             leftIcon={<FaSignInAlt />}
             variant="outline"
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "underline",
+              color: "teal.700",
+            }}
           >
-            Login
+             Login
           </Button>
         )}
         {!user && !hideSignup && (
@@ -62,6 +67,11 @@ const Footer = () => {
             size="xs"
             leftIcon={<FaUserPlus />}
             variant="outline"
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "none",
+              color: "teal.700",
+            }}
           >
             Sign Up
           </Button>
@@ -71,7 +81,11 @@ const Footer = () => {
           <ChakraLink
             as="button" // <<< change
             onClick={() => startTransition(() => navigate("/profile"))} // <<< change
-            _hover={{ textDecoration: "underline" }}
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "non",
+              color: "teal.700",
+            }}
           >
             <Flex align="center" gap="1">
               <Icon as={FaUser} />
@@ -88,7 +102,13 @@ const Footer = () => {
           size="xs"
           leftIcon={<FaSignOutAlt />}
           variant="outline"
+          _hover={{
+            transform: "scale(1.02)",
+            textDecoration: "underline",
+            color: "teal.700",
+          }}
         >
+          {" "}
           Logout
         </Button>
       ) : (

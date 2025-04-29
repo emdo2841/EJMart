@@ -6,7 +6,7 @@ const CartCount = () => {
   const { cart } = useCart();
   return (
     <Box position="relative">
-      <Text>Cart: {cart.length}</Text>
+      <Text fontSize="xm" fontWeight="medium" >Cart: {cart.length}</Text>
     </Box>
   );
 };

@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import api from "./context/api"; // your axios instance
 import { useNavigate } from "react-router-dom";
+import { FaAddressBook } from "react-icons/fa";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -77,13 +78,21 @@ const Profile = () => {
           <Badge colorScheme={user.role === "admin" ? "purple" : "blue"}>
             {user.role}
           </Badge>
+          <Text fontSize="md" color="gray.500">
+            {user.phone}
+          </Text>
+          <address fontSize="md" color="gray.500">
+            <icon as={FaAddressBook} /> {user.address || "No address provided"}
+            
+          </address>
         </VStack>
-        <Flex>
+        <Flex gap={2} >
           <Button
             mt={6}
             colorScheme="teal"
             size="sm"
-            onClick={() => navigate(`/update-role/${user._id}`)}
+            
+            onClick={() => navigate(`/update-profile/${user._id}`)}
           >
             Edit Profile
           </Button>

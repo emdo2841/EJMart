@@ -61,7 +61,7 @@ function EbookForm() {
 
   if (!user || (user.role !== "admin" && user.role !== "staff")) {
     return (
-      <Center>
+      <Center h="100vh" >
         <p style={{ color: "red", fontSize: "20px" }}>
           🚫 You do not have permission to edit this ebook.
         </p>
@@ -155,21 +155,22 @@ function EbookForm() {
   };
 
   return (
-    <Center>
+    <Center pb={{ base: "10", md: "12", sm: "14" }} mb="40px">
       <form onSubmit={handleSubmit}>
         <Stack
-          spacing="4"
+          spacing="2"
           w={["70%", "60%", "400px"]}
           mx="auto"
-          p="6"
+          p="4"
           m={10}
           borderWidth="1px"
           borderRadius="md"
           boxShadow="lg"
           bg={bg}
           borderColor={border}
-        >
+         
           
+        >
           <FormLabel>Product Name</FormLabel>
           <Input
             name="name"

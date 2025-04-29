@@ -37,29 +37,30 @@ const BrandDropdown =  ({ onClick }) => {
     }
   };
   return (
-      <Menu>
-        <MenuButton
-          as={Button}
-          rightIcon={<ChevronDownIcon />}
-          colorScheme="blue"
-          variant="link"
-          fontSize="lg"
-          fontWeight="bold"
-        >
-          Brands
-        </MenuButton>
-        <MenuList width="50px">
-          {brands.map((brand) => (
-            <MenuItem
-              key={brand._id}
-              onClick={() => handleBrandClick(brand._id)}
-            >
-              <Text color="blue.600">{brand.name}</Text>
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-    );
+    <Menu>
+      <MenuButton
+        as={Button}
+        rightIcon={<ChevronDownIcon />}
+        variant="link"
+        fontSize="sm"
+        fontWeight="medium"
+        _hover={{
+          transform: "scale(1.02)",
+          textDecoration:"underline",
+          color: "teal.700",
+        }}
+      >
+        Brands
+      </MenuButton>
+      <MenuList width="50px">
+        {brands.map((brand) => (
+          <MenuItem key={brand._id} onClick={() => handleBrandClick(brand._id)}>
+            <Text color="teal.600">{brand.name}</Text>
+          </MenuItem>
+        ))}
+      </MenuList>
+    </Menu>
+  );
   };
 
 export default BrandDropdown;

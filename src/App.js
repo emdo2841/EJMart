@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   ChakraProvider,
   ColorModeScript,
@@ -20,8 +20,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
-import { Routes, Route, useLocation } from "react-router-dom";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons";
+import { Input} from "@chakra-ui/react";
 // import { FaSignInAlt, FaUserPlus,  } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
@@ -56,6 +57,7 @@ import RemoveProductImages from "./RemoveProductImage"
 import BrandDropdown from "./BrandDropdown";
 import CategoryDropdown from "./CategoryDrpdown";
 import Footer from "./Footer";
+import UpdateProfile from "./UpdateProfile"
 const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
 // Define theme
 
@@ -69,10 +71,11 @@ const theme = extendTheme({
 const App = () => {
   const { user } = useAuth();
   const location = useLocation();
-
+  const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState("");
   const hideFlash = location.pathname.startsWith("/flash-sale");
   const hideOut = location.pathname.startsWith("/out-of-stock");
-  // const hideSignup = location.pathname.startsWith("/signup");
+  const hideUser = location.pathname.startsWith("/user");
   // const hideLogout = location.pathname.startsWith("/logout");
   const hideAdd = location.pathname.startsWith("/add-product");
   const showProductsOnRoot = location.pathname === "/";
@@ -95,112 +98,108 @@ const App = () => {
         _dark={{ bg: "gray.800" }}
         boxShadow="sm"
       >
-        {/* Hamburger icon for mobile */}
+        {/* 1. Hamburger (mobile only) */}
         <IconButton
           ref={btnRef}
           icon={<HamburgerIcon />}
           onClick={onOpen}
-          display={{ base: "block", md: "none" }} // Show only on mobile
+          display={{ base: "block", md: "none" }}
           aria-label="Open menu"
         />
 
-        {/* Logo */}
-        <Flex
-          justify={{ base: "flex-end", md: "flex-start" }} // Flex-end on mobile, flex-start on desktop
-          align="center"
-          gap="4"
-          flex="1"
+        {/* 2. Logo (always visible) */}
+        <ChakraLink
+          as={Link}
+          to="/"
+          display="flex"
+          alignItems="center"
+          gap="2"
+          // on mobile this sits immediately after hamburger
+          // on desktop it’s flush left of the whole header
+          flex={{ base: "none", md: "1" }}
+          justify={{ base: "flex-start", md: "flex-start" }}
         >
-          <ChakraLink
-            as={Link}
-            to="/"
-            transition="all 0.2s"
-            _hover={{
-              transform: "scale(1.02)",
-              textDecoration: "none",
-            }}
-            display="flex"
-            alignItems="center"
-            gap={2}
-          >
-            <Icon as={FaShoppingCart} boxSize={6} color="blue.500" />
-            <Text fontSize="lg" fontWeight="bold" color="blue.600">
-              EJ Mart
-            </Text>
-          </ChakraLink>
+          <Icon as={FaShoppingCart} boxSize={6} color="red.500" />
+          <Text fontSize="lg" fontWeight="bold" color="red.700">
+            EJ Mart
+          </Text>
+        </ChakraLink>
+
+        {/* 3. Mobile Search (only base) */}
+        <Flex
+          display={{ base: "flex", md: "none" }}
+          align="center"
+          flex="2"
+          gap="2"
+          mx="2"
+        >
+          <Input
+            placeholder="Search products…"
+            size="sm"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) =>
+              e.key === "Enter" &&
+              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
+            }
+          />
+          <IconButton
+            aria-label="Search"
+            icon={<SearchIcon />}
+            size="sm"
+            onClick={() =>
+              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
+            }
+          />
         </Flex>
 
-        {/* Cart Manager */}
-        <Flex
-          justify="flex-end"
-          align="center"
-          gap="4"
-          flex="1"
-          display={{ base: "flex", md: "none" }} // Show only on mobile
-        >
+        {/* 4. Mobile Cart (only base) */}
+        <Flex display={{ base: "flex", md: "none" }} align="center" gap="2">
           {user && (
             <>
               <ChakraLink
                 as={Link}
                 to="/cart"
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                }}
                 display="flex"
                 alignItems="center"
-                gap={2}
               >
-                <Icon as={FaShoppingCart} boxSize={6} color="blue.500" />
+                <Icon as={FaShoppingCart} boxSize={6} color="red.500" />
               </ChakraLink>
-              <CartCount /> {/* Display the number of items in the cart */}
+              <CartCount />
             </>
           )}
         </Flex>
 
         {/* Desktop nav (top-right) */}
         <Flex
-          display={{ base: "none", md: "flex" }} // Show only on desktop
+          display={{ base: "none", md: "flex" }}
           justify="flex-end"
           align="center"
           gap="4"
           flex="1"
         >
+          {/* your existing desktop items */}
+          <Input
+            placeholder="Search products…"
+            size="sm"
+            width="200px"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) =>
+              e.key === "Enter" &&
+              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
+            }
+          />
+          <IconButton
+            aria-label="Search"
+            icon={<SearchIcon />}
+            size="sm"
+            onClick={() =>
+              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
+            }
+          />
           <List display="flex" flexDirection="row" gap="4" m="0">
-            {user && (
-              <ListItem>
-                <ChakraLink
-                  as={Link}
-                  to="/cart"
-                  transition="all 0.2s"
-                  _hover={{
-                    transform: "scale(1.02)",
-                    textDecoration: "none",
-                  }}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Icon as={FaShoppingCart} boxSize={6} color="blue.500" />
-                </ChakraLink>
-              </ListItem>
-            )}
-
-            {user && (
-              <ListItem
-                color="blue.700"
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                }}
-              >
-                <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                  <CartCount />
-                </Text>
-              </ListItem>
-            )}
+           
             <ListItem>
               <BrandDropdown />
             </ListItem>
@@ -217,12 +216,13 @@ const App = () => {
                   _hover={{
                     transform: "scale(1.02)",
                     textDecoration: "none",
+                    color: "teal.700",
                   }}
                   display="flex"
                   alignItems="center"
                   gap={2}
                 >
-                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                  <Text fontSize="xs" fontWeight="medium">
                     Re-STock
                   </Text>
                 </ChakraLink>
@@ -235,12 +235,13 @@ const App = () => {
                 _hover={{
                   transform: "scale(1.02)",
                   textDecoration: "none",
+                  color: "teal.700",
                 }}
                 display="flex"
                 alignItems="center"
                 gap={2}
               >
-                <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                <Text fontSize="xs" fontWeight="medium">
                   Flash Sales
                 </Text>
               </ChakraLink>
@@ -249,27 +250,26 @@ const App = () => {
             {user?.role &&
               (user.role === "admin" || user.role === "staff") &&
               !hideAdd && (
-                <ListItem>
-                  <ChakraLink
-                    as={Link}
-                    to="/add-product"
-                    transition="all 0.2s"
-                    _hover={{
-                      transform: "scale(1.02)",
-                      textDecoration: "none",
-                    }}
-                    display="flex"
-                    alignItems="center"
-                    gap={2}
-                  >
-                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                      Add Product
-                    </Text>
-                  </ChakraLink>
-                </ListItem>
+                <ChakraLink
+                  as={Link}
+                  to="/add-product"
+                  transition="all 0.2s"
+                  _hover={{
+                    transform: "scale(1.02)",
+                    textDecoration: "none",
+                    color: "teal.700",
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                >
+                  <Text fontSize="xs" fontWeight="medium">
+                    Add Product
+                  </Text>
+                </ChakraLink>
               )}
 
-            {user?.role === "admin" && (
+            {user?.role === "admin" && !hideUser && (
               <ChakraLink
                 as={Link}
                 to="/users"
@@ -277,15 +277,50 @@ const App = () => {
                 _hover={{
                   transform: "scale(1.02)",
                   textDecoration: "none",
+                  color: "teal.700",
                 }}
                 display="flex"
                 alignItems="center"
                 gap={2}
               >
-                <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                <Text fontSize="xs" fontWeight="medium">
                   Users
                 </Text>
               </ChakraLink>
+            )}
+             {user && (
+              <ListItem>
+                <ChakraLink
+                  as={Link}
+                  to="/cart"
+                  transition="all 0.2s"
+                  _hover={{
+                    transform: "scale(1.02)",
+                    textDecoration: "none",
+                    color: "teal.700",
+                  }}
+                  display="flex"
+                  alignItems="center"
+                  gap={2}
+                >
+                  <Icon as={FaShoppingCart} boxSize={5} color="red.400" />
+                </ChakraLink>
+              </ListItem>
+            )}
+
+            {user && (
+              <ListItem
+                transition="all 0.2s"
+                _hover={{
+                  transform: "scale(1.02)",
+                  textDecoration: "none",
+                  color: "teal.700",
+                }}
+              >
+                <Text fontSize="sm" fontWeight="mdium">
+                  <CartCount />
+                </Text>
+              </ListItem>
             )}
           </List>
           <DarkModeToggle />
@@ -303,6 +338,34 @@ const App = () => {
           <DrawerCloseButton />
           <DrawerHeader>EJ</DrawerHeader>
           <DrawerBody>
+            {/* Search in drawer */}
+            <Flex mb="4">
+              <Input
+                placeholder="Search products…"
+                size="sm"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" &&
+                  (onClose(),
+                  navigate(
+                    `/search?q=${encodeURIComponent(searchInput.trim())}`
+                  ))
+                }
+              />
+              <IconButton
+                ml="2"
+                aria-label="Search"
+                icon={<SearchIcon />}
+                size="sm"
+                onClick={() => {
+                  onClose();
+                  navigate(
+                    `/search?q=${encodeURIComponent(searchInput.trim())}`
+                  );
+                }}
+              />
+            </Flex>
             <List spacing={4}>
               <ListItem>
                 <Link to="/flash-sale" onClick={onClose}>
@@ -359,11 +422,16 @@ const App = () => {
       <Footer />
       {/* Routes */}
       <Routes>
+        <Route path="/search" element={<Products />} />
         <Route path="/signup" element={<Form />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/update-profile/:userId"
+          element={<ProtectedRoute element={<UpdateProfile />} />}
+        />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route
@@ -376,13 +444,16 @@ const App = () => {
           path="/verify-payment/:reference"
           element={<ProtectedRoute element={<VerifyPayment />} />}
         />
-        <Route path="/add-review" element={<AddReview />} />
-        <Route path="/flash-sale" element={<FlashSale />} />
-        <Route path="/update-review/:productId" element={<UpdateReview />} />
         <Route
-          path="/browse-by-brand/:id"
-          element={<BrandProductSelector />}
-        />{" "}
+          path="/add-review"
+          element={<ProtectedRoute element={<AddReview />} />}
+        />
+        <Route path="/flash-sale" element={<FlashSale />} />
+        <Route
+          path="/update-review/:productId"
+          element={<ProtectedRoute element={<UpdateReview />} />}
+        />
+        <Route path="/browse-by-brand/:id" element={<BrandProductSelector />} />{" "}
         {/* NEW LINE */}
         <Route
           path="/browse-by-category/:id"
@@ -483,6 +554,8 @@ const DarkModeToggle = () => {
       bottom="70px" // Adjust bottom distance as needed
       right="5px" // Adjust right distance as needed
       zIndex="1001"
+      color="red.400"
+
     >
       {colorMode === "light" ? "Dark 🌙" : "Light ☀️"}
     </Button>

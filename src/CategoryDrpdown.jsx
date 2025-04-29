@@ -42,12 +42,16 @@ const CategoryDropdown = ({ onClick }) => {
       <MenuButton
         as={Button}
         rightIcon={<ChevronDownIcon />}
-        colorScheme="blue"
         variant="link"
-        fontSize="lg"
-        fontWeight="bold"
+        fontSize="xm"
+        fontWeight="medium"
+        _hover={{
+          transform: "scale(1.02)",
+          textDecoration: "underline",
+          color: "teal.700",
+        }}
       >
-        Categories
+         Categories
       </MenuButton>
       <MenuList width="50px">
         {brands.map((category) => (

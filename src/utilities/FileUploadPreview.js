@@ -49,7 +49,7 @@ const FileUploadPreview = ({ onFilesChange }) => {
   return (
     <Box
       {...getRootProps()}
-      border="2px dashed"
+      border="2px solid"
       borderColor="gray.300"
       borderRadius="lg"
       p={4}
