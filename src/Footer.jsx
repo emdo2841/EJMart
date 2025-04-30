@@ -65,12 +65,12 @@ const Footer = () => {
             as={Link}
             to="/signup"
             size="xs"
-            leftIcon={<FaUserPlus />}
+            leftIcon={<FaUserPlus color="red.300" />}
             variant="outline"
             _hover={{
               transform: "scale(1.02)",
               textDecoration: "none",
-              color: "teal.700",
+              color: ".700",
             }}
           >
             Sign Up
@@ -88,7 +88,7 @@ const Footer = () => {
             }}
           >
             <Flex align="center" gap="1">
-              <Icon as={FaUser} />
+              <Icon as={FaUser} color="red:300" />
               <Text>Profile</Text>
             </Flex>
           </ChakraLink>
@@ -100,12 +100,13 @@ const Footer = () => {
           as={Link}
           to="/logout"
           size="xs"
+          color="red.300"
           leftIcon={<FaSignOutAlt />}
           variant="outline"
           _hover={{
             transform: "scale(1.02)",
             textDecoration: "underline",
-            color: "teal.700",
+            color: "red.700",
           }}
         >
           {" "}

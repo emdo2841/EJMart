@@ -23,6 +23,7 @@ import { keyframes } from "@emotion/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "./context/CartContext";
 import { useAuth } from "./context/authContext";
+import GlowingText from "./animation";
 
 const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
@@ -118,25 +119,29 @@ const Products = () => {
   const totalPages = Math.ceil(totalProducts / limit);
 
   return (
-    <Center flexDir="column" p="4">
+    <Center flexDir="column" p="4" mb="15" mt="0">
       {q && (
         <Text mb="4" fontSize="lg">
           {" "}
           Showing results for “{q}”{" "}
         </Text>
       )}
-      <Text fontSize="2xl" fontWeight="bold" mb="4">
-        Products
-      </Text>
-
+      <GlowingText />
       {products.length > 0 ? (
         <Center px={{ base: 2, md: 4 }}>
           <Grid
-            templateColumns="repeat(auto-fit, minmax(120px, 1fr))"
-            maxW="1500px"
-            gap={4}
+            templateColumns="repeat(auto-fit, minmax(100px, 1fr))"
+            maxW={{
+              base: "100%", // fallback for very small screens
+              sm: "600px", // ≥ 480px
+              md: "800px", // ≥ 768px
+              lg: "1000px", // ≥ 992px
+              xl: "1200px", // ≥ 1280px
+            }}
+            gap={2}
             justifyContent="center"
             p={{ base: "2", md: "4" }}
+            mt="-4"
           >
             {products.map((product) => (
               <GridItem

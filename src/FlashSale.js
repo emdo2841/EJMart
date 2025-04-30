@@ -23,7 +23,7 @@ import { keyframes } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "./context/CartContext";
 import { useAuth } from "./context/authContext";
-
+import GlowingHead from "./LAnimation";
 const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -113,10 +113,9 @@ const FlashSale = () => {
 
   return (
     <Center flexDir="column" p="4">
-      <Text fontSize="2xl" fontWeight="bold" mb="4">
-        Flash Sales
-      </Text>
-
+      <GlowingHead fontSize="4xl" fontWeight="extrabold" textAlign="center">
+  Hot Deals!
+</GlowingHead>
       {products.length > 0 ? (
         <Grid
           templateColumns={{
@@ -166,9 +165,7 @@ const FlashSale = () => {
               <Text fontSize="xs" color="red.500">
                 {product.discountPercentage.toFixed(2)}% off
               </Text>
-              <Text fontSize="xs" >
-               Stocks Available: {product.stock}
-              </Text>
+              <Text fontSize="xs">Stocks Available: {product.stock}</Text>
               <Button
                 colorScheme="green"
                 onClick={() => addToCart(product)}
@@ -204,7 +201,6 @@ const FlashSale = () => {
       ) : (
         <Text>No products found</Text>
       )}
-
       {/* Delete Confirmation Dialog */}
       <AlertDialog
         isOpen={isDialogOpen}
@@ -231,7 +227,6 @@ const FlashSale = () => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
-
       {/* Pagination */}
       <Box
         mt="4"

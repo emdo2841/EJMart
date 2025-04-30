@@ -58,6 +58,8 @@ import BrandDropdown from "./BrandDropdown";
 import CategoryDropdown from "./CategoryDrpdown";
 import Footer from "./Footer";
 import UpdateProfile from "./UpdateProfile"
+import GlowingText from "./animation";
+import ErrorPage from "./Error";
 const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
 // Define theme
 
@@ -78,7 +80,7 @@ const App = () => {
   const hideUser = location.pathname.startsWith("/user");
   // const hideLogout = location.pathname.startsWith("/logout");
   const hideAdd = location.pathname.startsWith("/add-product");
-  const showProductsOnRoot = location.pathname === "/";
+  c
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
@@ -119,8 +121,16 @@ const App = () => {
           flex={{ base: "none", md: "1" }}
           justify={{ base: "flex-start", md: "flex-start" }}
         >
-          <Icon as={FaShoppingCart} boxSize={6} color="red.500" />
-          <Text fontSize="lg" fontWeight="bold" color="red.700">
+          <Icon
+            as={FaShoppingCart}
+            boxSize={{ base: "4", sm: "4", md: "4", lg: "5", xl: "6" }}
+            color="red.500"
+          />
+          <Text
+            fontSize={{ base: "md", sm: "md", md: "lg", lg: "lg", xl: "lg" }}
+            fontWeight="bold"
+            color="red.700"
+          >
             EJ Mart
           </Text>
         </ChakraLink>
@@ -130,13 +140,20 @@ const App = () => {
           display={{ base: "flex", md: "none" }}
           align="center"
           flex="2"
-          gap="2"
+          gap=" 2"
           mx="2"
         >
           <Input
             placeholder="Search products…"
             size="sm"
             value={searchInput}
+            borderRadius={"md"}
+            transition="all 0.2s"
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "none",
+              color: "teal.700",
+            }}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) =>
               e.key === "Enter" &&
@@ -146,7 +163,14 @@ const App = () => {
           <IconButton
             aria-label="Search"
             icon={<SearchIcon />}
+            borderRadius={"md"}
             size="sm"
+            transition="all 0.2s"
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "none",
+              color: "teal.700",
+            }}
             onClick={() =>
               navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
             }
@@ -163,7 +187,11 @@ const App = () => {
                 display="flex"
                 alignItems="center"
               >
-                <Icon as={FaShoppingCart} boxSize={6} color="red.500" />
+                <Icon
+                  as={FaShoppingCart}
+                  boxSize={{ base: "4", sm: "4", md: "4", lg: "5", xl: "6" }}
+                  color="red.500"
+                />
               </ChakraLink>
               <CartCount />
             </>
@@ -182,8 +210,15 @@ const App = () => {
           <Input
             placeholder="Search products…"
             size="sm"
-            width="200px"
+            width="160px"
             value={searchInput}
+            borderRadius={"md"}
+            transition="all 0.2s"
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "none",
+              color: "teal.700",
+            }}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) =>
               e.key === "Enter" &&
@@ -194,12 +229,17 @@ const App = () => {
             aria-label="Search"
             icon={<SearchIcon />}
             size="sm"
+            transition="all 0.2s"
+            _hover={{
+              transform: "scale(1.02)",
+              textDecoration: "none",
+              color: "teal.700",
+            }}
             onClick={() =>
               navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
             }
           />
           <List display="flex" flexDirection="row" gap="4" m="0">
-           
             <ListItem>
               <BrandDropdown />
             </ListItem>
@@ -241,9 +281,9 @@ const App = () => {
                 alignItems="center"
                 gap={2}
               >
-                <Text fontSize="xs" fontWeight="medium">
-                  Flash Sales
-                </Text>
+                <GlowingText fontSize="xs" fontWeight="medium">
+                  Hot Deals
+                </GlowingText>
               </ChakraLink>
             )}
 
@@ -288,7 +328,7 @@ const App = () => {
                 </Text>
               </ChakraLink>
             )}
-             {user && (
+            {user && (
               <ListItem>
                 <ChakraLink
                   as={Link}
@@ -417,11 +457,12 @@ const App = () => {
       </Drawer>
 
       {/* Products shown on home route only */}
-      {showProductsOnRoot && <Products />}
+      {/* {showProductsOnRoot && <Products />} */}
 
       <Footer />
       {/* Routes */}
       <Routes>
+        <Route path="/" element={<Products />} />
         <Route path="/search" element={<Products />} />
         <Route path="/signup" element={<Form />} />
         <Route path="/login" element={<LoginForm />} />
@@ -438,6 +479,7 @@ const App = () => {
           path="/update-password"
           element={<ProtectedRoute element={<UpdatePassword />} />}
         />
+        <Route path="*" element={<ErrorPage />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/transact" element={<Checkout user={user} />} />
         <Route
