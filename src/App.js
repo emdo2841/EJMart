@@ -80,7 +80,7 @@ const App = () => {
   const hideUser = location.pathname.startsWith("/user");
   // const hideLogout = location.pathname.startsWith("/logout");
   const hideAdd = location.pathname.startsWith("/add-product");
-  c
+
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
