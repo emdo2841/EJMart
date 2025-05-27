@@ -3,64 +3,44 @@ import {
   ChakraProvider,
   ColorModeScript,
   extendTheme,
-  Flex,
-  List,
-  ListItem,
   Button,
-  IconButton,
-  useDisclosure,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
-  DrawerBody,
-  Link as ChakraLink,
-  Icon,
-  Text,
 } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons";
-import { Input} from "@chakra-ui/react";
-// import { FaSignInAlt, FaUserPlus,  } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
-import Form from "./form";
-import LoginForm from "./login";
-import Logout from "./logout";
-import ProtectedRoute from "./ProtectedRoute";
-import EbookForm from "./postEbook";
-import Products from "./fetch";
+import { Routes, Route } from "react-router-dom";
+import Form from "./components/form";
+import LoginForm from "./components/login";
+import Logout from "./components/logout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import EbookForm from "./components/postEbook";
+import Products from "./components/fetch";
 import { useAuth } from "./context/authContext";
-import ProductDetails from "./fetch_id";
-import ForgetPassword from "./forgetPassword";
-import ResetPassword from "./ResetPassword"
-import UpdatePassword from "./UpdatePassword";
-import CartCount from "./utilities/cartCount";
-import Cart from "./cart";
-import Checkout from "./checkout";
-import VerifyPayment from "./VerifyPayment";
-import GetAllUsers from "./getAllUser";
-import UserDetails from "./getUser";
-import UpdateUserRole from "./updateRole";
-import BrandProductSelector from "./brandProduct";
-import CategoryProductSelector from "./categoryProduct";
-import AddReview from "./AddReview";
-import UpdateReview from "./UpdateReview";
-import UpdateProduct from "./update";
-import OutOfStockProducts from "./OutOfStock";
-import FlashSale from "./FlashSale";
-import AddProductImage from "./EditImages";
-import ReplaceProductImage from "./ReplaceProductImages";
-import RemoveProductImages from "./RemoveProductImage"
-import BrandDropdown from "./BrandDropdown";
-import CategoryDropdown from "./CategoryDrpdown";
-import Footer from "./Footer";
-import UpdateProfile from "./UpdateProfile"
-import GlowingText from "./animation";
-import ErrorPage from "./Error";
-const Profile = React.lazy(() => import("./profile")); // Lazy load the Profile component
+import ProductDetails from "./components/fetch_id";
+import ForgetPassword from "./components/forgetPassword";
+import ResetPassword from "./components/ResetPassword"
+import UpdatePassword from "./components/UpdatePassword";
+import Cart from "./components/cart";
+import Checkout from "./components/checkout";
+import VerifyPayment from "./components/VerifyPayment";
+import GetAllUsers from "./components/getAllUser";
+import UserDetails from "./components/getUser";
+import UpdateUserRole from "./components/updateRole";
+import BrandProductSelector from "./components/brandProduct";
+import CategoryProductSelector from "./components/categoryProduct";
+import AddReview from "./components/AddReview";
+import UpdateReview from "./components/UpdateReview";
+import UpdateProduct from "./components/update";
+import OutOfStockProducts from "./components/OutOfStock";
+import FlashSale from "./components/FlashSale";
+import AddProductImage from "./components/EditImages";
+import ReplaceProductImage from "./components/ReplaceProductImages";
+import RemoveProductImages from "./components/RemoveProductImage"
+
+import UpdateProfile from "./components/UpdateProfile"
+
+import ErrorPage from "./components/Error";
+
+import Header from "./components/HEADER"
+const Profile = React.lazy(() => import("./components/profile")); // Lazy load the Profile component
 // Define theme
 
 const theme = extendTheme({
@@ -72,394 +52,13 @@ const theme = extendTheme({
 
 const App = () => {
   const { user } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState("");
-  const hideFlash = location.pathname.startsWith("/flash-sale");
-  const hideOut = location.pathname.startsWith("/out-of-stock");
-  const hideUser = location.pathname.startsWith("/user");
-  // const hideLogout = location.pathname.startsWith("/logout");
-  const hideAdd = location.pathname.startsWith("/add-product");
-
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = useRef();
-
+ 
   return (
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      {/* Responsive Nav */}
-      <Flex
-        justify="space-between"
-        align="center"
-        p="4"
-        position="sticky"
-        top="0"
-        zIndex="999"
-        bg="gray.50"
-        _dark={{ bg: "gray.800" }}
-        boxShadow="sm"
-      >
-        {/* 1. Hamburger (mobile only) */}
-        <IconButton
-          ref={btnRef}
-          icon={<HamburgerIcon />}
-          onClick={onOpen}
-          display={{ base: "block", md: "none" }}
-          aria-label="Open menu"
-        />
-
-        {/* 2. Logo (always visible) */}
-        <ChakraLink
-          as={Link}
-          to="/"
-          display="flex"
-          alignItems="center"
-          gap="2"
-          // on mobile this sits immediately after hamburger
-          // on desktop it’s flush left of the whole header
-          flex={{ base: "none", md: "1" }}
-          justify={{ base: "flex-start", md: "flex-start" }}
-        >
-          <Icon
-            as={FaShoppingCart}
-            boxSize={{ base: "4", sm: "4", md: "4", lg: "5", xl: "6" }}
-            color="red.500"
-          />
-          <Text
-            fontSize={{ base: "md", sm: "md", md: "lg", lg: "lg", xl: "lg" }}
-            fontWeight="bold"
-            color="red.700"
-          >
-            EJ Mart
-          </Text>
-        </ChakraLink>
-
-        {/* 3. Mobile Search (only base) */}
-        <Flex
-          display={{ base: "flex", md: "none" }}
-          align="center"
-          flex="2"
-          gap=" 2"
-          mx="2"
-        >
-          <Input
-            placeholder="Search products…"
-            size="sm"
-            value={searchInput}
-            borderRadius={"md"}
-            transition="all 0.2s"
-            _hover={{
-              transform: "scale(1.02)",
-              textDecoration: "none",
-              color: "teal.700",
-            }}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" &&
-              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
-            }
-          />
-          <IconButton
-            aria-label="Search"
-            icon={<SearchIcon />}
-            borderRadius={"md"}
-            size="sm"
-            transition="all 0.2s"
-            _hover={{
-              transform: "scale(1.02)",
-              textDecoration: "none",
-              color: "teal.700",
-            }}
-            onClick={() =>
-              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
-            }
-          />
-        </Flex>
-
-        {/* 4. Mobile Cart (only base) */}
-        <Flex display={{ base: "flex", md: "none" }} align="center" gap="2">
-          {user && (
-            <>
-              <ChakraLink
-                as={Link}
-                to="/cart"
-                display="flex"
-                alignItems="center"
-              >
-                <Icon
-                  as={FaShoppingCart}
-                  boxSize={{ base: "4", sm: "4", md: "4", lg: "5", xl: "6" }}
-                  color="red.500"
-                />
-              </ChakraLink>
-              <CartCount />
-            </>
-          )}
-        </Flex>
-
-        {/* Desktop nav (top-right) */}
-        <Flex
-          display={{ base: "none", md: "flex" }}
-          justify="flex-end"
-          align="center"
-          gap="4"
-          flex="1"
-        >
-          {/* your existing desktop items */}
-          <Input
-            placeholder="Search products…"
-            size="sm"
-            width="160px"
-            value={searchInput}
-            borderRadius={"md"}
-            transition="all 0.2s"
-            _hover={{
-              transform: "scale(1.02)",
-              textDecoration: "none",
-              color: "teal.700",
-            }}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" &&
-              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
-            }
-          />
-          <IconButton
-            aria-label="Search"
-            icon={<SearchIcon />}
-            size="sm"
-            transition="all 0.2s"
-            _hover={{
-              transform: "scale(1.02)",
-              textDecoration: "none",
-              color: "teal.700",
-            }}
-            onClick={() =>
-              navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`)
-            }
-          />
-          <List display="flex" flexDirection="row" gap="4" m="0">
-            <ListItem>
-              <BrandDropdown />
-            </ListItem>
-            <ListItem>
-              <CategoryDropdown />
-            </ListItem>
-            {user?.role &&
-              (user.role === "admin" || user.role === "staff") &&
-              !hideOut && (
-                <ChakraLink
-                  as={Link}
-                  to="/out-of-stock"
-                  transition="all 0.2s"
-                  _hover={{
-                    transform: "scale(1.02)",
-                    textDecoration: "none",
-                    color: "teal.700",
-                  }}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Text fontSize="xs" fontWeight="medium">
-                    Re-STock
-                  </Text>
-                </ChakraLink>
-              )}
-            {!hideFlash && (
-              <ChakraLink
-                as={Link}
-                to="/flash-sale"
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                  color: "teal.700",
-                }}
-                display="flex"
-                alignItems="center"
-                gap={2}
-              >
-                <GlowingText fontSize="xs" fontWeight="medium">
-                  Hot Deals
-                </GlowingText>
-              </ChakraLink>
-            )}
-
-            {user?.role &&
-              (user.role === "admin" || user.role === "staff") &&
-              !hideAdd && (
-                <ChakraLink
-                  as={Link}
-                  to="/add-product"
-                  transition="all 0.2s"
-                  _hover={{
-                    transform: "scale(1.02)",
-                    textDecoration: "none",
-                    color: "teal.700",
-                  }}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Text fontSize="xs" fontWeight="medium">
-                    Add Product
-                  </Text>
-                </ChakraLink>
-              )}
-
-            {user?.role === "admin" && !hideUser && (
-              <ChakraLink
-                as={Link}
-                to="/users"
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                  color: "teal.700",
-                }}
-                display="flex"
-                alignItems="center"
-                gap={2}
-              >
-                <Text fontSize="xs" fontWeight="medium">
-                  Users
-                </Text>
-              </ChakraLink>
-            )}
-            {user && (
-              <ListItem>
-                <ChakraLink
-                  as={Link}
-                  to="/cart"
-                  transition="all 0.2s"
-                  _hover={{
-                    transform: "scale(1.02)",
-                    textDecoration: "none",
-                    color: "teal.700",
-                  }}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Icon as={FaShoppingCart} boxSize={5} color="red.400" />
-                </ChakraLink>
-              </ListItem>
-            )}
-
-            {user && (
-              <ListItem
-                transition="all 0.2s"
-                _hover={{
-                  transform: "scale(1.02)",
-                  textDecoration: "none",
-                  color: "teal.700",
-                }}
-              >
-                <Text fontSize="sm" fontWeight="mdium">
-                  <CartCount />
-                </Text>
-              </ListItem>
-            )}
-          </List>
-          <DarkModeToggle />
-        </Flex>
-      </Flex>
-      {/* Mobile Drawer */}
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        finalFocusRef={btnRef}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>EJ</DrawerHeader>
-          <DrawerBody>
-            {/* Search in drawer */}
-            <Flex mb="4">
-              <Input
-                placeholder="Search products…"
-                size="sm"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" &&
-                  (onClose(),
-                  navigate(
-                    `/search?q=${encodeURIComponent(searchInput.trim())}`
-                  ))
-                }
-              />
-              <IconButton
-                ml="2"
-                aria-label="Search"
-                icon={<SearchIcon />}
-                size="sm"
-                onClick={() => {
-                  onClose();
-                  navigate(
-                    `/search?q=${encodeURIComponent(searchInput.trim())}`
-                  );
-                }}
-              />
-            </Flex>
-            <List spacing={4}>
-              <ListItem>
-                <Link to="/flash-sale" onClick={onClose}>
-                  <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                    Flash Sales
-                  </Text>
-                </Link>
-              </ListItem>
-              {user?.role &&
-                (user.role === "admin" || user.role === "staff") &&
-                !hideAdd && (
-                  <ListItem>
-                    <Link to="/out-of-stock" onClick={onClose}>
-                      <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                        Re-STock
-                      </Text>
-                    </Link>
-                  </ListItem>
-                )}
-              {user?.role &&
-                (user.role === "admin" || user.role === "staff") &&
-                !hideAdd && (
-                  <ListItem>
-                    <Link to="/add-product" onClick={onClose}>
-                      <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                        Add New Product
-                      </Text>
-                    </Link>
-                  </ListItem>
-                )}
-              {user?.role === "admin" && !hideAdd && (
-                <ListItem>
-                  <Link to="/users" onClick={onClose}>
-                    <Text fontSize="lg" fontWeight="bold" color="blue.600">
-                      Users
-                    </Text>
-                  </Link>
-                </ListItem>
-              )}
-              <ListItem>
-                <BrandDropdown onClick={onClose} />
-              </ListItem>
-              <ListItem>
-                <CategoryDropdown onClick={onClose} />
-              </ListItem>
-            </List>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-
-      {/* Products shown on home route only */}
-      {/* {showProductsOnRoot && <Products />} */}
-
-      <Footer />
+      
+      <Header/>
+     
       {/* Routes */}
       <Routes>
         <Route path="/" element={<Products />} />
