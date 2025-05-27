@@ -6,7 +6,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Form from "./components/form";
 import LoginForm from "./components/login";
 import Logout from "./components/logout";
@@ -34,7 +34,7 @@ import FlashSale from "./components/FlashSale";
 import AddProductImage from "./components/EditImages";
 import ReplaceProductImage from "./components/ReplaceProductImages";
 import RemoveProductImages from "./components/RemoveProductImage"
-
+import Footer from "./components/Footer"
 import UpdateProfile from "./components/UpdateProfile"
 
 import ErrorPage from "./components/Error";
@@ -52,13 +52,16 @@ const theme = extendTheme({
 
 const App = () => {
   const { user } = useAuth();
- 
+  const location = useLocation();
+  const hideFooterRoutes = ["/login", "/signup"];
+  const shouldHideFooter = hideFooterRoutes.includes(location.pathname);
+
   return (
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      
-      <Header/>
-     
+
+      <Header />
+
       {/* Routes */}
       <Routes>
         <Route path="/" element={<Products />} />
@@ -179,6 +182,7 @@ const App = () => {
           }
         />
       </Routes>
+      {!shouldHideFooter && <Footer />}
     </ChakraProvider>
   );
 };

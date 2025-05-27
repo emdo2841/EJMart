@@ -104,7 +104,7 @@ const BrandProductSelector = () => {
 
   if (loading) {
     return (
-      <Center p={4}>
+      <Center p={4} height="100vh">
         <Box
           as="div"
           border="4px solid transparent"
@@ -118,12 +118,17 @@ const BrandProductSelector = () => {
     );
   }
 
-  if (error) return <p>Error: {error}</p>;
+  if (error)
+      return (
+        <Center h="100vh">
+          <Text color="red.500">{error} please try again!!!</Text>
+        </Center>
+      );
 
   const totalPages = Math.ceil(totalProducts / limit);
 
   return (
-    <Center flexDir="column" p="4">
+    <Center flexDir="column" p="4" minh="100vh">
       <Text fontSize="2xl" fontWeight="bold" mb="4">
         {name}
       </Text>
@@ -138,7 +143,7 @@ const BrandProductSelector = () => {
             lg: "1000px", // ≥ 992px
             xl: "1200px", // ≥ 1280px
           }}
-          gap={2}
+          gap={5}
           justifyContent="center"
           p={{ base: "2", md: "4" }}
           mt="-4"
@@ -149,10 +154,11 @@ const BrandProductSelector = () => {
               p="2"
               borderWidth="1px"
               borderColor="gray.300"
+              border="none"
               borderRadius="md"
               textAlign="center"
               minH="150px"
-              shadow="md"
+              shadow="lg"
               transition="all 0.2s"
               _hover={{ shadow: "lg", transform: "scale(1.02)" }}
             >
@@ -189,7 +195,7 @@ const BrandProductSelector = () => {
               <Button
                 colorScheme="green"
                 onClick={() => navigate(`/product/${product._id}`)}
-                mt="1"
+                m="1"
                 size="xs"
               >
                 View
@@ -200,7 +206,7 @@ const BrandProductSelector = () => {
                   icon={<DeleteIcon />}
                   colorScheme="red"
                   size="sm"
-                  mt="1"
+                  m="1"
                   onClick={() => {
                     setSelectedId(product._id);
                     setIsDialogOpen(true);

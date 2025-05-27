@@ -95,14 +95,16 @@ const Products = () => {
 
   if (loading) {
     return (
-      <Center p={4}>
+      <Center p={4} height="100vh">
         <Box
           as="div"
           border="4px solid transparent"
           borderTop="4px solid #48BB78"
           borderRadius="50%"
+          alignItems={"center"}
           width="50px"
           height="50px"
+
           animation={`${spinAnimation} 1.5s linear infinite`}
         />
       </Center>
@@ -119,7 +121,7 @@ const Products = () => {
   const totalPages = Math.ceil(totalProducts / limit);
 
   return (
-    <Center flexDir="column" p="4" mb="15" mt="0">
+    <Center flexDir="column" p="4" mb="15" mt="0" minH="100vh">
       {q && (
         <Text mb="4" fontSize="lg">
           {" "}
@@ -138,8 +140,9 @@ const Products = () => {
               lg: "1000px", // ≥ 992px
               xl: "1200px", // ≥ 1280px
             }}
-            gap={2}
+            gap={6}
             justifyContent="center"
+            spacing={6}
             p={{ base: "2", md: "4" }}
             mt="5 "
           >
@@ -148,11 +151,12 @@ const Products = () => {
                 key={product._id}
                 p="2"
                 borderWidth="1px"
+                border="none"
                 borderColor="gray.300"
                 borderRadius="md"
                 textAlign="center"
                 minH="150px"
-                shadow="md"
+                shadow="lg"
                 transition="all 0.2s"
                 _hover={{ shadow: "lg", transform: "scale(1.02)" }}
               >
@@ -186,7 +190,7 @@ const Products = () => {
                 <Button
                   colorScheme="green"
                   onClick={() => addToCart(product)}
-                  mt="1"
+                  m="1"
                   size="xs"
                 >
                   Add to Cart
@@ -194,7 +198,7 @@ const Products = () => {
                 <Button
                   colorScheme="green"
                   onClick={() => navigate(`/product/${product._id}`)}
-                  mt="1"
+                  m="1"
                   size="xs"
                 >
                   View

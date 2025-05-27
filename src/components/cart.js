@@ -24,7 +24,7 @@ const Cart = () => {
   }
 
   return (
-    <VStack spacing={4} p={4}>
+    <VStack spacing={4} p={4} height="100vh">
       {cart.map((item) => (
         <HStack
           key={item._id}
