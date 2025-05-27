@@ -1,11 +1,7 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import {
   ChakraProvider,
-  ColorModeScript,
-  extendTheme,
-  Button,
 } from "@chakra-ui/react";
-import { useColorMode } from "@chakra-ui/react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Form from "./components/form";
 import LoginForm from "./components/login";
@@ -43,12 +39,7 @@ import Header from "./components/HEADER"
 const Profile = React.lazy(() => import("./components/profile")); // Lazy load the Profile component
 // Define theme
 
-const theme = extendTheme({
-  config: {
-    initialColorMode: "light",
-    useSystemColorMode: false,
-  },
-});
+
 
 const App = () => {
   const { user } = useAuth();
@@ -57,8 +48,8 @@ const App = () => {
   const shouldHideFooter = hideFooterRoutes.includes(location.pathname);
 
   return (
-    <ChakraProvider theme={theme}>
-      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+    <ChakraProvider >
+      
 
       <Header />
 
@@ -187,24 +178,6 @@ const App = () => {
   );
 };
 
-// Dark mode toggle
-// Dark Mode Toggle button positioned at the bottom-right corner
-const DarkModeToggle = () => {
-  const { colorMode, toggleColorMode } = useColorMode();
 
-  return (
-    <Button
-      onClick={toggleColorMode}
-      position="fixed"
-      bottom="70px" // Adjust bottom distance as needed
-      right="5px" // Adjust right distance as needed
-      zIndex="1001"
-      color="red.400"
-
-    >
-      {colorMode === "light" ? "Dark 🌙" : "Light ☀️"}
-    </Button>
-  );
-};
 
 export default App;

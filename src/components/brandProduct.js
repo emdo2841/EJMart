@@ -163,9 +163,11 @@ const BrandProductSelector = () => {
               _hover={{ shadow: "lg", transform: "scale(1.02)" }}
             >
               <Image
+                w="50px"
+                height="80px"
                 src={product.images[0]}
                 alt={product.name}
-                boxSize={{ base: "50px", sm: "60px", md: "80px" }}
+                boxSize={{ base: "70px", sm: "80px", md: "90px" }}
                 objectFit="cover"
                 mx="auto"
                 mb="1"

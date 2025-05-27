@@ -144,7 +144,7 @@ const Products = () => {
             justifyContent="center"
             spacing={6}
             p={{ base: "2", md: "4" }}
-            mt="5 "
+            mt={{base: "7", lg: "5"}}
           >
             {products.map((product) => (
               <GridItem
@@ -161,7 +161,10 @@ const Products = () => {
                 _hover={{ shadow: "lg", transform: "scale(1.02)" }}
               >
                 <Image 
+                  w="50px"
+                  height="80px"
                   src={product.images[0]}
+                  
                   alt={product.name}
                   boxSize={{ base: "70px", sm: "80px", md: "90px" }}
                   objectFit="cover"

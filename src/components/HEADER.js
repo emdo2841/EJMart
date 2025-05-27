@@ -11,14 +11,14 @@ import {
   Container,
   Badge,
 } from '@chakra-ui/react';
-import { Menu, User, Heart } from 'lucide-react';
+import { Menu, Heart } from 'lucide-react';
 import SearchBar from './SearchBar';
 import CartIcon from './CartIcon';
 import BrandDropdown from "./BrandDropdown"
 import CategoryDropdown from "./CategoryDrpdown"
 import CartCount from "../utilities/cartCount";
 import { useAuth } from "../context/authContext"
-import { startTransition } from 'react';
+import AccountMenu from "./Account"
 
 const Header = () => {
     const { isOpen, onToggle } = useDisclosure();
@@ -26,26 +26,20 @@ const Header = () => {
   const { user } = useAuth();
   const location = useLocation();
     
-      const hideLogin = location.pathname.startsWith("/login");
-      const hideSignup = location.pathname.startsWith("/signup");
-      const hideProfile = location.pathname.startsWith("/profile");
-      const hideFlash = location.pathname.startsWith("/flash-sale");
+     
+  const hideFlash = location.pathname.startsWith("/flash-sale");
   const hideOut = location.pathname.startsWith("/out-of-stock");
   const hideAdd = location.pathname.startsWith("/add-product");
+  const hideUser = location.pathname.startsWith("/user");
 
-  const navigationLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/products' },
-    { name: 'Collections', href: '/categories' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ];
+  
 
   return (
     <Box
       bg="white"
       borderBottom="1px"
       borderColor="gray.100"
+      m="0 9"
       boxShadow="0 2px 20px rgba(0,0,0,0.08)"
       position="sticky"
       top="0"
@@ -67,10 +61,12 @@ const Header = () => {
           </Text>
         </Box> */}
 
-        <Flex minH="20" py={4} align="center" justify="space-between">
+        <Flex minH="20" py={2} align="center" justify="space-between">
           {/* Premium Logo */}
           <Flex align="center">
             <Text
+              as="a"
+              href="/"
               fontSize="3xl"
               fontWeight="800"
               bgGradient="linear(to-r, blue.600, purple.600)"
@@ -98,9 +94,14 @@ const Header = () => {
           </Flex>
 
           {/* Desktop Navigation */}
-          <Flex display={{ base: "none", lg: "flex" }} ml={10}>
+          <Flex
+            display={{ base: "none", lg: "flex" }}
+            ml={20}
+            flex=""
+            justify="space-between"
+            align="center"
+          >
             <Stack direction="row" spacing={8}>
-              
               <Button
                 bg="white"
                 size="md"
@@ -251,157 +252,28 @@ const Header = () => {
             <SearchBar />
           </Box>
 
-          {/* Right side premium actions */}
-          {/* <Flex align="center" spacing={2}> */}
-          {/* Search icon for mobile */}
-          {/* <IconButton
-              display={{ base: "flex", md: "none" }}
-              icon={<Search size={20} />}
-              variant="ghost"
-              size="md"
-              aria-label="Search"
-              color="gray.700"
-              _hover={{
-                color: "blue.600",
-                bg: "blue.50",
-                transform: "scale(1.05)",
-              }}
-              transition="all 0.2s ease"
-            /> */}
-
-          {/* Wishlist */}
-          {/* <IconButton
-              display={{ base: 'none', sm: 'flex' }}
-              icon={<Heart size={20} />}
-              variant="ghost"
-              size="md"
-              aria-label="Wishlist"
-              color="gray.700"
-              _hover={{
-                color: 'red.500',
-                bg: 'red.50',
-                transform: 'scale(1.05)'
-              }}
-              transition="all 0.2s ease"
-            /> */}
-
-          {/* {!hideFlash && (
-            <Button
-              as="a"
-              href="/flash-sale"
-              variant="ghost"
-              size="md"
-              fontWeight="500"
-              color="gray.700"
-              position="relative"
-              _hover={{
-                color: "blue.600",
-                bg: "transparent",
-                transform: "translateY(-1px)",
-                _after: {
-                  width: "100%",
-                  opacity: 1,
-                },
-              }}
-              _after={{
-                content: '""',
-                position: "absolute",
-                bottom: "-4px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "0%",
-                height: "2px",
-                bg: "blue.600",
-                opacity: 0,
-                transition: "all 0.3s ease",
-              }}
-              transition="all 0.2s ease"
-            >
-              Hot Deals
-            </Button> */}
-          {/* )} */}
-
+          
           {/* User Account */}
-
-          {user && !hideProfile ? (
-            <Button
-              display= "inline-flex"
-              variant="ghost"
-              size="md"
-              leftIcon={<User size={18} />}
-              fontWeight="500"
-              color="gray.700"
-              _hover={{
-                color: "blue.600",
-                bg: "blue.50",
-                transform: "translateY(-1px)",
-              }}
-              transition="all 0.2s ease"
-              onClick={() => startTransition(() => navigate("/profile"))} // <<< change
-            >
-              Account
-            </Button>
-          ) : (
-            !user &&
-            !hideLogin && (
-              <Button
-                display= "inline-flex"s
-                variant="ghost"
-                size="md"
-                leftIcon={<User size={18} />}
-                fontWeight="500"
-                color="gray.700"
-                _hover={{
-                  color: "blue.600",
-                  bg: "blue.50",
-                  transform: "translateY(-1px)",
-                }}
-                transition="all 0.2s ease"
-                onClick={() => navigate("/login")}
-              >
-                Sign In
-              </Button>
-            )
-          )}
-          {!user && !hideSignup && (
-            <Button
-              display={{ base: "none", sm: "inline-flex" }}
-              variant="ghost"
-              size="md"
-              leftIcon={<User size={18} />}
-              fontWeight="500"
-              color="gray.700"
-              _hover={{
-                color: "blue.600",
-                bg: "blue.50",
-                transform: "translateY(-1px)",
-              }}
-              transition="all 0.2s ease"
-              onClick={() => navigate("/signup")}
-            >
-              Sign up
-            </Button>
-          )}
-
+          <AccountMenu />
+          
           {/* Cart Icon with item count */}
-          {user && (
-            <Button
-              display="inline-flex"
-              variant="ghost"
-              size="md"
-              fontWeight="500"
-              color="gray.700"
-              _hover={{
-                color: "blue.600",
-                bg: "blue.50",
-                transform: "translateY(-1px)",
-              }}
-              transition="all 0.2s ease"
-              onClick={() => navigate("/cart")}
-            >
-              <CartIcon itemCount={<CartCount />} />
-            </Button>
-          )}
+
+          <Button
+            display="inline-flex"
+            variant="ghost"
+            size="md"
+            fontWeight="500"
+            color="gray.700"
+            _hover={{
+              color: "blue.600",
+              bg: "blue.50",
+              transform: "translateY(-1px)",
+            }}
+            transition="all 0.2s ease"
+            onClick={() => navigate("/cart")}
+          >
+            <CartIcon itemCount={<CartCount />} />
+          </Button>
 
           {/* Mobile menu button */}
           <IconButton
@@ -438,34 +310,151 @@ const Header = () => {
             borderRadius="0 0 xl xl"
           >
             <Stack pt={4} pb={3} spacing={1}>
-              {navigationLinks.map((link) => (
-                <Button
-                  key={link.name}
-                  as="a"
-                  href={link.href}
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  onClick={onToggle}
-                  size="lg"
-                  fontWeight="500"
-                  color="gray.700"
-                  _hover={{
-                    color: "blue.600",
-                    bg: "blue.50",
-                    transform: "translateX(8px)",
-                  }}
-                  transition="all 0.2s ease"
-                >
-                  {link.name}
-                </Button>
-              ))}
+              
+              <Button
+                bg="white"
+                size="md"
+                fontWeight="500"
+                color="gray.700"
+                position="relative"
+                _hover={{
+                  color: "blue.600",
+                  bg: "transparent",
+                  transform: "translateY(-1px)",
+                  _after: {
+                    width: "100%",
+                    opacity: 1,
+                  },
+                }}
+                _after={{
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "0%",
+                  height: "2px",
+                  bg: "blue.600",
+                  opacity: 0,
+                  transition: "all 0.3s ease",
+                }}
+                transition="all 0.2s ease"
+              >
+                <BrandDropdown label="Shop" />
+              </Button>
+              <Button
+                variant="ghost"
+                bg="white"
+                size="md"
+                fontWeight="500"
+                color="gray.700"
+                position="relative"
+                _hover={{
+                  color: "blue.600",
+                  bg: "transparent",
+                  transform: "translateY(-1px)",
+                  _after: {
+                    width: "100%",
+                    opacity: 1,
+                  },
+                }}
+                _after={{
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "0%",
+                  height: "2px",
+                  bg: "blue.600",
+                  opacity: 0,
+                  transition: "all 0.3s ease",
+                }}
+                transition="all 0.2s ease"
+              >
+                <CategoryDropdown label="Collections" />
+              </Button>
+              {user?.role &&
+                (user.role === "admin" || user.role === "staff") &&
+                !hideOut && (
+                  <Button
+                    as="a"
+                    href="/out-of-stock"
+                    variant="ghost"
+                    size="md"
+                    fontWeight="500"
+                    color="gray.700"
+                    position="relative"
+                    _hover={{
+                      color: "blue.600",
+                      bg: "transparent",
+                      transform: "translateY(-1px)",
+                      _after: {
+                        width: "100%",
+                        opacity: 1,
+                      },
+                    }}
+                    _after={{
+                      content: '""',
+                      position: "absolute",
+                      bottom: "-4px",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: "0%",
+                      height: "2px",
+                      bg: "blue.600",
+                      opacity: 0,
+                      transition: "all 0.3s ease",
+                    }}
+                    transition="all 0.2s ease"
+                  >
+                    Out of stock
+                  </Button>
+                )}
+              {user?.role &&
+                (user.role === "admin" || user.role === "staff") &&
+                !hideAdd && (
+                  <Button
+                    as="a"
+                    href="/add-product"
+                    variant="ghost"
+                    size="md"
+                    fontWeight="500"
+                    color="gray.700"
+                    position="relative"
+                    _hover={{
+                      color: "blue.600",
+                      bg: "transparent",
+                      transform: "translateY(-1px)",
+                      _after: {
+                        width: "100%",
+                        opacity: 1,
+                      },
+                    }}
+                    _after={{
+                      content: '""',
+                      position: "absolute",
+                      bottom: "-4px",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: "0%",
+                      height: "2px",
+                      bg: "blue.600",
+                      opacity: 0,
+                      transition: "all 0.3s ease",
+                    }}
+                    transition="all 0.2s ease"
+                  >
+                    Add Items
+                  </Button>
+                )}
               <Box borderTop="1px" borderColor="gray.100" pt={4} mt={2}>
-                <Button
+                {!hideFlash && (<Button
                   as="a"
-                  href="/account"
+                  href="/flash-sale"
                   variant="ghost"
                   justifyContent="flex-start"
-                  leftIcon={<User size={18} />}
+                  // leftIcon={<User size={18} />}
                   size="lg"
                   fontWeight="500"
                   color="gray.700"
@@ -476,26 +465,30 @@ const Header = () => {
                   }}
                   transition="all 0.2s ease"
                 >
-                  My Account
+                  Hot Deals
                 </Button>
-                <Button
-                  as="a"
-                  href="/wishlist"
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  leftIcon={<Heart size={18} />}
-                  size="lg"
-                  fontWeight="500"
-                  color="gray.700"
-                  _hover={{
-                    color: "red.500",
-                    bg: "red.50",
-                    transform: "translateX(8px)",
-                  }}
-                  transition="all 0.2s ease"
-                >
-                  Wishlist
-                </Button>
+                )}
+                {user?.role &&
+                  (user.role === "admin" || user.role === "staff") &&
+                  !hideUser && (<Button
+                    as="a"
+                    href="/user"
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    leftIcon={<Heart size={18} />}
+                    size="lg"
+                    fontWeight="500"
+                    color="gray.700"
+                    _hover={{
+                      color: "red.500",
+                      bg: "red.50",
+                      transform: "translateX(8px)",
+                    }}
+                    transition="all 0.2s ease"
+                  >
+                    User
+                  </Button>
+                  )}
               </Box>
             </Stack>
           </Box>
