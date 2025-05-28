@@ -186,8 +186,10 @@ import {
   Flex,
   FormLabel,
   VStack,
-  Spinner,
+  Text,
+  CircularProgress,
   Image,
+  Center,
 } from "@chakra-ui/react";
 import FileUploadPreview from "./fileUploadPreview";
 import api from "../context/api";
@@ -219,6 +221,7 @@ const UpdateProfile = () => {
         setFormData({ fullName, address, phone, image: null });
         if (image) setPreviewUrl(image);
       } catch (err) {
+        setError(err.response?.data?.message || "Failed to load profile");
         toast({
           title: "Error loading profile",
           description: err.response?.data?.message || "Could not fetch user",
@@ -273,6 +276,7 @@ const UpdateProfile = () => {
         throw new Error("Update failed");
       }
     } catch (err) {
+
       toast({
         title: "Update failed",
         description:
@@ -288,12 +292,15 @@ const UpdateProfile = () => {
 
   if (isFetching) {
     return (
-      <Flex minHeight="80vh" justify="center" align="center">
-        <Spinner size="xl" />
-      </Flex>
+      <Center flexDirection="column" p={4} minH="80vh">
+            <CircularProgress isIndeterminate color="blue.400" size="80px" />
+            </Center>
     );
   }
-
+  if (error)
+    return (
+      <Center minH="80vh"><Text>{ error }</Text></Center>
+    )
   return (
     <Flex
       minHeight="100vh"
@@ -308,19 +315,20 @@ const UpdateProfile = () => {
         p={6}
         boxShadow="md"
         borderRadius="md"
-        bg="white"  
+        bg="white"
+        bgRepeat="no-repeat"
+        bgSize="cover"
+        bgImage="url(https://img.freepik.com/free-photo/cyber-monday-shopping-sales_23-2148688550.jpg?uid=R111967752&ga=GA1.1.617246776.1748393573&semt=ais_hybrid&w=740)"
       >
         <Heading mb={4} textAlign="center" size="md">
           Update Profile
         </Heading>
-
         {error && (
           <Alert status="error" mb={4}>
             <AlertIcon />
             {error}
           </Alert>
         )}
-
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
             {/* Current Picture Preview */}
@@ -342,6 +350,7 @@ const UpdateProfile = () => {
                 name="fullName"
                 placeholder="Enter full name"
                 size="sm"
+                bg="white"
                 value={formData.fullName}
                 onChange={handleChange}
               />
@@ -353,6 +362,7 @@ const UpdateProfile = () => {
                 name="address"
                 placeholder="Enter address"
                 size="sm"
+                bg="white"
                 value={formData.address}
                 onChange={handleChange}
               />
@@ -365,6 +375,7 @@ const UpdateProfile = () => {
                 placeholder="Enter phone number"
                 type="tel"
                 size="sm"
+                bg="white"
                 value={formData.phone}
                 onChange={handleChange}
               />

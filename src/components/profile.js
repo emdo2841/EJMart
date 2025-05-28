@@ -3,12 +3,12 @@ import {
   Avatar,
   Box,
   Center,
-  Spinner,
+  CircularProgress,
   Text,
   VStack,
   Badge,
   Button,
-  Flex
+  Flex,
 } from "@chakra-ui/react";
 import api from "../context/api"; // your axios instance
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -39,15 +39,15 @@ const Profile = () => {
 
   if (loading)
     return (
-      <Center h="100vh">
-        <Spinner size="xl" />
+      <Center flexDirection="column" p={4} minH="80vh">
+        <CircularProgress isIndeterminate color="blue.400" size="80px" />
       </Center>
     );
 
   if (error)
     return (
-      <Center h="100vh">
-        <Text color="red.500">Error: {error}</Text>
+      <Center h="80vh">
+        <Text  color="red.500">Error: {error}</Text>
       </Center>
     );
 
@@ -83,15 +83,13 @@ const Profile = () => {
           </Text>
           <address fontSize="md" color="gray.500">
             <icon as={FaAddressBook} /> {user.address || "No address provided"}
-            
           </address>
         </VStack>
-        <Flex gap={2} >
+        <Flex gap={2}>
           <Button
             mt={6}
             colorScheme="teal"
             size="sm"
-            
             onClick={() => navigate(`/update-profile/${user._id}`)}
           >
             Edit Profile

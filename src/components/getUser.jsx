@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import api from "../context/api";
-import { AlertDialog,
+import {
+  AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
-  AlertDialogOverlay,Box, Center, Text, CircularProgress, Button, useToast, Image} from "@chakra-ui/react";
+  AlertDialogOverlay,
+  Box,
+  Center,
+  Text,
+  CircularProgress,
+  Button,
+  useToast,
+  Image,
+} from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { useRef } from "react";
@@ -17,7 +26,6 @@ const UserDetails = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const cancelRef = useRef();
-  
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -33,12 +41,9 @@ const UserDetails = () => {
 
     const fetchUser = async () => {
       try {
-        const response = await api.get(
-          `/auth/user/${userId}`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await api.get(`/auth/user/${userId}`, {
+          withCredentials: true,
+        });
 
         if (response.data && response.data.user) {
           setUserData(response.data.user);
@@ -64,34 +69,32 @@ const UserDetails = () => {
 
     fetchUser();
   }, [user, userId, toast]);
-  
-    const handleDelete = async () => {
-      try {
-        await api.delete(`/auth/user/${selectedUserId}`, {
-          withCredentials: true,
-        });
-  
-        setUserData(userData.filter((u) => u._id !== selectedUserId));
-        setIsDialogOpen(false);
-        setSelectedUserId(null);
-      } catch (error) {
-        toast({
-          title: "Delete failed",
-          description: error.response?.data?.message || "Failed to delete user",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    };
+
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/auth/user/${selectedUserId}`, {
+        withCredentials: true,
+      });
+
+      setUserData(userData.filter((u) => u._id !== selectedUserId));
+      setIsDialogOpen(false);
+      setSelectedUserId(null);
+    } catch (error) {
+      toast({
+        title: "Delete failed",
+        description: error.response?.data?.message || "Failed to delete user",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   if (loading) {
     return (
       <Center flexDirection="column" p={4} minH="100vh">
-        <CircularProgress isIndeterminate color="green.400" size="80px" />
-        <Text mt={4} fontSize="lg" color="gray.600">
-          Loading...
-        </Text>
+        <CircularProgress isIndeterminate color="blue.400" size="80px" />
+        
       </Center>
     );
   }
@@ -100,7 +103,8 @@ const UserDetails = () => {
     return (
       <Center flexDirection="column" p={4} minH="100vh">
         <Text fontSize="lg" color="red.500">
-       {error}</Text>
+          {error}
+        </Text>
       </Center>
     );
   }
@@ -114,7 +118,7 @@ const UserDetails = () => {
   }
 
   return (
-    <Box maxW="700px" w="100%" mx="auto" p="4"minH="100vh"> 
+    <Box maxW="700px" w="100%" mx="auto" p="4" minH="100vh">
       <Text fontSize="2xl" fontWeight="bold">
         {userData.fullName}
       </Text>
@@ -154,39 +158,32 @@ const UserDetails = () => {
         </Button>
       </Box>
       <AlertDialog
-                          isOpen={isDialogOpen}
-                          leastDestructiveRef={cancelRef}
-                          onClose={() => setIsDialogOpen(false)}
-                        >
-                          <AlertDialogOverlay>
-                            <AlertDialogContent>
-                              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                Delete User
-                              </AlertDialogHeader>
-      
-                              <AlertDialogBody>
-                                Are you sure you want to delete this user? This action
-                                cannot be undone.
-                              </AlertDialogBody>
-      
-                              <AlertDialogFooter>
-                                <Button
-                                  ref={cancelRef}
-                                  onClick={() => setIsDialogOpen(false)}
-                                >
-                                  Cancel
-                                </Button>
-                                <Button
-                                  colorScheme="red"
-                                  onClick={handleDelete}
-                                  ml={3}
-                                >
-                                  Delete
-                                </Button>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialogOverlay>
-                        </AlertDialog>
+        isOpen={isDialogOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setIsDialogOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete User
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete this user? This action cannot be
+              undone.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };

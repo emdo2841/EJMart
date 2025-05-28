@@ -16,18 +16,16 @@ import {
   AlertDialogOverlay,
   useToast,
   IconButton,
+  CircularProgress
 } from "@chakra-ui/react";
 import { useCallback } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { keyframes } from "@emotion/react";
+
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/authContext";
 
-const spinAnimation = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
+
 
 const OutOfStockProducts = () => {
   const [products, setProducts] = useState([]);
@@ -93,17 +91,10 @@ const OutOfStockProducts = () => {
 
   if (loading) {
     return (
-      <Center p={4} minH="100vh">
-        <Box
-          as="div"
-          border="4px solid transparent"
-          borderTop="4px solid #48BB78"
-          borderRadius="50%"
-          width="50px"
-          height="50px"
-          animation={`${spinAnimation} 1.5s linear infinite`}
-        />
-      </Center>
+      <Center flexDirection="column" p={4} minH="100vh">
+              <CircularProgress isIndeterminate color="blue.400" size="80px" />
+              
+            </Center>
     );
   }
 

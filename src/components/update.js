@@ -5,8 +5,9 @@ import {
   Center,
   FormLabel,
   Input,
+  Text,
   Select,
-  Spinner,
+  CircularProgress,
   Stack,
   useToast,
   useColorModeValue,
@@ -23,6 +24,7 @@ const UpdateProductFields = () => {
   const [brands, setBrands] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -46,6 +48,7 @@ const UpdateProductFields = () => {
         setCategories(catRes.data.data);
         setBrands(brandRes.data.data);
       } catch (err) {
+        setError(err.message || "Failed to load data");
         toast({
           title: "Failed to load product data",
           status: "error",
@@ -86,11 +89,13 @@ const UpdateProductFields = () => {
 
   if (isLoading)
     return (
-      <Center mt={10}>
-        <Spinner size="xl" />
-      </Center>
+      <Center flexDirection="column" p={4} minH="80vh">
+            <CircularProgress isIndeterminate color="blue.400" size="80px" />
+            </Center>
     );
-
+  if (error)
+        return(
+          <Center minH="80vh"><Text>error: {error} try Again please</Text></Center>)
   return (
     <Center>
       <Box
@@ -105,8 +110,17 @@ const UpdateProductFields = () => {
         bg={bg}
         borderColor={border}
         mb="120px"
+        spacing="2"
+        mx="auto"
+        m={10}
+        bgRepeat="no-repeat"
+        bgSize="cover"
+        bgImage="url(https://img.freepik.com/free-photo/cyber-monday-shopping-sales_23-2148688550.jpg?uid=R111967752&ga=GA1.1.617246776.1748393573&semt=ais_hybrid&w=740)"
       >
-        <Stack spacing={4}>
+        <Stack
+          spacing="2"
+        
+        >
           <FormLabel>Name</FormLabel>
           <Input {...register("name")} />
 
@@ -148,7 +162,7 @@ const UpdateProductFields = () => {
             ))}
           </Select>
 
-          <Button colorScheme="teal" type="submit" isLoading={loading}>
+          <Button colorScheme="blue" type="submit" isLoading={loading}>
             Update Fields
           </Button>
         </Stack>

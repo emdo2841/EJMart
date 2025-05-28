@@ -96,11 +96,9 @@ const GetAllUsers = () => {
 
   if (loading) {
     return (
-      <Center flexDirection="column" p={4} minH="100vh">
-        <CircularProgress isIndeterminate color="green.400" size="80px" />
-        <Text mt={4} fontSize="lg" color="gray.600">
-          Loading...
-        </Text>
+      <Center flexDirection="column" p={4} minH="80vh">
+        <CircularProgress isIndeterminate color="blue.400" size="80px" />
+        
       </Center>
     );
   }

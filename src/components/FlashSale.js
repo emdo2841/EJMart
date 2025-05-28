@@ -16,18 +16,16 @@ import {
   AlertDialogOverlay,
   useToast,
   IconButton,
+  CircularProgress,
 } from "@chakra-ui/react";
 import { useCallback } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { keyframes } from "@emotion/react";
+
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/authContext";
 import GlowingHead from "./LAnimation";
-const spinAnimation = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
+
 
 const FlashSale = () => {
   const [products, setProducts] = useState([]);
@@ -46,24 +44,21 @@ const FlashSale = () => {
   const cancelRef = useRef();
 
   const fetchProducts = useCallback(async () => {
-  try {
-    const response = await api.get(
-      `/product/flash-sale?page=${page}&limit=${limit}`
-    );
-    setProducts(response.data.data || []);
-    setTotalProducts(response.data.total || 0);
-  } catch (error) {
-    setError(error.response?.data?.message || error.message);
-  } finally {
-    setLoading(false);
-  }
-}, [page, limit]);
-;
-
+    try {
+      const response = await api.get(
+        `/product/flash-sale?page=${page}&limit=${limit}`
+      );
+      setProducts(response.data.data || []);
+      setTotalProducts(response.data.total || 0);
+    } catch (error) {
+      setError(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, limit]);
   useEffect(() => {
-  fetchProducts();
-}, [fetchProducts]);
-
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleDelete = async () => {
     try {
@@ -83,7 +78,8 @@ const FlashSale = () => {
     } catch (error) {
       toast({
         title: "Delete failed",
-        description: error.response?.data?.message || "Failed to delete product",
+        description:
+          error.response?.data?.message || "Failed to delete product",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -93,26 +89,18 @@ const FlashSale = () => {
 
   if (loading) {
     return (
-      <Center p={4} height="100vh">
-        <Box
-          as="div"
-          border="4px solid transparent"
-          borderTop="4px solid #48BB78"
-          borderRadius="50%"
-          width="50px"
-          height="50px"
-          animation={`${spinAnimation} 1.5s linear infinite`}
-        />
+      <Center flexDirection="column" p={4} minH="80vh">
+        <CircularProgress isIndeterminate color="blue.400" size="80px" />
       </Center>
     );
   }
 
   if (error)
-    return(
+    return (
       <Center color="red.50" flexDir="column" p="4" height="100vh">
         <p>Error: {error}</p>
       </Center>
-    )
+    );
 
   const totalPages = Math.ceil(totalProducts / limit);
 
@@ -208,8 +196,9 @@ const FlashSale = () => {
           ))}
         </Grid>
       ) : (
-          <Center h="100vh" >
-        <Text>No products found</Text></Center>
+        <Center h="100vh">
+          <Text>No products found</Text>
+        </Center>
       )}
       {/* Delete Confirmation Dialog */}
       <AlertDialog
@@ -271,4 +260,3 @@ const FlashSale = () => {
 };
 
 export default FlashSale;
-

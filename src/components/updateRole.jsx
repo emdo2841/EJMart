@@ -6,7 +6,7 @@ import {
   Button,
   useToast,
   Select,
-  Spinner,
+  CircularProgress,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
@@ -64,7 +64,7 @@ const UpdateUserRole = () => {
   // Restrict access to admins only
   if (!user || user.role !== "admin") {
     return (
-      <Center>
+      <Center height="80vh">
         <p style={{ color: "red", fontSize: "20px" }}>
           🚫 You do not have permission to update user roles.
         </p>
@@ -117,14 +117,19 @@ const UpdateUserRole = () => {
 
   if (loading) {
     return (
-      <Center height="100vh">
-        <Spinner size="xl" />
-      </Center>
+      <Center flexDirection="column" p={4} minH="80vh">
+              <CircularProgress isIndeterminate color="blue.400" size="80px" />
+            </Center>
     );
   }
-
+  if(errors)
+    return(
+      <Center minH="80vh">
+        <p style={{ color: "red" }}>Error: {errors} Please try again!</p>
+      </Center>
+  )
   return (
-    <Center>
+    <Center height="100vh" flexDirection="column">
       <form onSubmit={handleSubmit}>
         <Stack
           spacing="4"
@@ -150,7 +155,7 @@ const UpdateUserRole = () => {
           </Select>
           {errors && <p style={{ color: "red" }}>{errors}</p>}
 
-          <Button type="submit" colorScheme="green" width="100%">
+          <Button type="submit" colorScheme="blue" width="100%">
             Update Role
           </Button>
         </Stack>

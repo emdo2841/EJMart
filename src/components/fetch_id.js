@@ -8,13 +8,12 @@ import {
   HStack,
   IconButton,
   Image,
+  CircularProgress,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
-  Spinner,
-
   Text,
   useDisclosure,
   useToast,
@@ -103,8 +102,8 @@ const ProductDetails = () => {
 
   if (loading)
     return (
-      <Center h="100vh">
-        <Spinner size="xl" />
+     <Center flexDirection="column" p={4} minH="80vh">
+      <CircularProgress isIndeterminate color="blue.400" size="80px" />
       </Center>
     );
 
