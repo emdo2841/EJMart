@@ -157,7 +157,7 @@ const BrandProductSelector = () => {
               textAlign="center"
               border="none"
               minH="150px"
-              shadow="md"
+              shadow="lg"
               transition="all 0.2s"
               _hover={{ shadow: "lg", transform: "scale(1.02)" }}
             >

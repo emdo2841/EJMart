@@ -6,7 +6,6 @@ import {
   Button,
   Select,
   useToast,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import FileUploadPreview from "../utilities/FileUploadPreview";
@@ -17,8 +16,7 @@ import { useAuth } from "../context/authContext";
 function EbookForm() {
   const { user } = useAuth();
 
-  const bg = useColorModeValue("white", "gray.700");
-  const border = useColorModeValue("gray.200", "gray.600");
+  
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -166,22 +164,23 @@ function EbookForm() {
           borderWidth="1px"
           borderRadius="md"
           boxShadow="lg"
-          bg={bg}
-          borderColor={border}
-         
-          
+          bgRepeat="no-repeat"
+          bgSize="cover"
+          bgImage="url(https://img.freepik.com/free-photo/cyber-monday-shopping-sales_23-2148688550.jpg?uid=R111967752&ga=GA1.1.617246776.1748393573&semt=ais_hybrid&w=740)"
         >
           <FormLabel>Product Name</FormLabel>
           <Input
             name="name"
+            bg="white"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Book name"
+            placeholder="Product name"
           />
 
           <FormLabel>Description</FormLabel>
           <Input
             name="description"
+            bg="white"
             value={formData.description}
             onChange={handleChange}
             placeholder="Description"
@@ -190,6 +189,7 @@ function EbookForm() {
           <FormLabel>Price</FormLabel>
           <Input
             type="number"
+            bg="white"
             name="price"
             value={formData.price}
             onChange={handleChange}
@@ -199,6 +199,7 @@ function EbookForm() {
           <FormLabel>Discounted Price</FormLabel>
           <Input
             type="number"
+            bg="white"
             name="discountedPrice"
             value={formData.discountedPrice}
             onChange={handleChange}
@@ -208,6 +209,7 @@ function EbookForm() {
           <FormLabel>Stock</FormLabel>
           <Input
             type="number"
+            bg="white"
             name="stock"
             value={formData.stock}
             onChange={handleChange}
@@ -217,6 +219,7 @@ function EbookForm() {
           <FormLabel>Category</FormLabel>
           <Select
             name="category"
+            bg="white"
             value={formData.category}
             onChange={handleChange}
           >
@@ -229,7 +232,12 @@ function EbookForm() {
           </Select>
 
           <FormLabel>Brand</FormLabel>
-          <Select name="brand" value={formData.brand} onChange={handleChange}>
+          <Select
+            name="brand"
+            bg="white"
+            value={formData.brand}
+            onChange={handleChange}
+          >
             <option value="">Select Brand</option>
             {brands.map((brand) => (
               <option value={brand._id} key={brand._id}>
@@ -248,7 +256,7 @@ function EbookForm() {
 
           {errors.images && <p style={{ color: "red" }}>{errors.images}</p>}
 
-          <Button type="submit" colorScheme="green">
+          <Button type="submit" colorScheme="blue">
             Submit
           </Button>
         </Stack>

@@ -108,6 +108,7 @@ const Form = () => {
       align="center"
       bg={cardBg} // optional background
       mb="40px"
+      mt="4"
     >
       <Box
         w={["70%", "60%", "400px"]}
@@ -119,9 +120,11 @@ const Form = () => {
         borderColor={cardBorder}
         mt="4px"
         mb="60px"
-        
+        bgRepeat="no-repeat"
+        bgSize="cover"
+        bgImage="url(https://img.freepik.com/free-photo/cyber-monday-shopping-sales_23-2148688550.jpg?uid=R111967752&ga=GA1.1.617246776.1748393573&semt=ais_hybrid&w=740)"
       >
-        <Heading mb={2} textAlign="center" size="md">
+        <Heading mb={2} textAlign="center" s>
           Sign Up
         </Heading>
 
@@ -201,6 +204,7 @@ const Form = () => {
                 type="text"
                 size="sm"
                 name="address"
+                bg="white"
                 value={formData.address}
                 onChange={handleChange}
               />
@@ -219,6 +223,7 @@ const Form = () => {
                 type="tel"
                 size="sm"
                 name="phone"
+                bg="white"
                 value={formData.phone}
                 onChange={handleChange}
               />

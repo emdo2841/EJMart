@@ -52,6 +52,7 @@ const FileUploadPreview = ({ onFilesChange }) => {
       border="2px solid"
       borderColor="gray.300"
       borderRadius="lg"
+      bg="white"
       p={4}
       textAlign="center"
       cursor="pointer"

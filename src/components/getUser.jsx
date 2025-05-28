@@ -87,7 +87,7 @@ const UserDetails = () => {
 
   if (loading) {
     return (
-      <Center flexDirection="column" p={4}>
+      <Center flexDirection="column" p={4} minH="100vh">
         <CircularProgress isIndeterminate color="green.400" size="80px" />
         <Text mt={4} fontSize="lg" color="gray.600">
           Loading...
@@ -98,22 +98,23 @@ const UserDetails = () => {
 
   if (error) {
     return (
-      <Center>
-        <Text color="red.500">{error}</Text>
+      <Center flexDirection="column" p={4} minH="100vh">
+        <Text fontSize="lg" color="red.500">
+       {error}</Text>
       </Center>
     );
   }
 
   if (!userData) {
     return (
-      <Center>
+      <Center flexDirection="column" p={4} minH="100vh">
         <Text>No user found.</Text>
       </Center>
     );
   }
 
   return (
-    <Box maxW="700px" w="100%" mx="auto" p="4">
+    <Box maxW="700px" w="100%" mx="auto" p="4"minH="100vh"> 
       <Text fontSize="2xl" fontWeight="bold">
         {userData.fullName}
       </Text>

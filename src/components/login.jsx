@@ -79,10 +79,7 @@ const LoginForm = () => {
       minHeight="80vh"
       justify="center"
       align="center"
-      bg={cardBg} // optional background
-      bgRepeat="no-repeat"
-      bgSize="cover"
-      bgImage="url(https://images.unsplash.com/photo-1664455340023-214c33a9d0bd?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)"
+     
     >
       <Box
         w={["70%", "60%", "400px"]}
@@ -93,7 +90,7 @@ const LoginForm = () => {
         bg={cardBg}
         bgRepeat="no-repeat"
         bgSize="cover"
-        bgImage="url(https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1350&q=80)"
+        bgImage="url(https://img.freepik.com/free-photo/cyber-monday-shopping-sales_23-2148688550.jpg?uid=R111967752&ga=GA1.1.617246776.1748393573&semt=ais_hybrid&w=740)"
       >
         <Heading mb={6} textAlign="center">
           Login

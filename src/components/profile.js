@@ -52,7 +52,7 @@ const Profile = () => {
     );
 
   return (
-    <Center py={10}>
+    <Center py={10} minH="100vh">
       <Box
         maxW="sm"
         w="full"

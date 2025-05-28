@@ -47,6 +47,7 @@ const FileUploadPreview = ({ setImage }) => {
       borderRadius="lg"
       p={2} // Reduce padding
       textAlign="center"
+      bg="white"
       cursor="pointer"
       _hover={{ borderColor: "blue.300", bg: "gray.50" }}
       transition="all 0.2s"

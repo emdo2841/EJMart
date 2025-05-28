@@ -62,7 +62,7 @@ const Logout = () => {
   };
 
   return (
-    <Center flexDirection="column" mt="10">
+    <Center flexDirection="column" height="100vh">
       <Text fontSize="xl" mb="4">
         Are you sure you want to logout?
       </Text>

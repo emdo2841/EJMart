@@ -96,7 +96,7 @@ const GetAllUsers = () => {
 
   if (loading) {
     return (
-      <Center flexDirection="column" p={4}>
+      <Center flexDirection="column" p={4} minH="100vh">
         <CircularProgress isIndeterminate color="green.400" size="80px" />
         <Text mt={4} fontSize="lg" color="gray.600">
           Loading...
@@ -107,15 +107,16 @@ const GetAllUsers = () => {
 
   if (error)
     return (
-      <Center>
-        <Text color="red.500">Error: {error}</Text>
+      <Center flexDirection="column" p={4} minH="100vh">
+        <Text fontSize="lg" color="red.500" mb={4}>
+        Error: {error} please try again</Text>
       </Center>
     );
 
   const totalPages = Math.ceil(totalUsers / limit);
 
   return (
-    <Flex direction="column" align="center" p={4}>
+    <Flex direction="column" align="center" p={4} minH="100vh">
       <Text fontSize="2xl" fontWeight="bold" mb={6}>
         Users
       </Text>

@@ -1,4 +1,4 @@
-import { useNavigate, useLocation} from 'react-router-dom';
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -7,32 +7,34 @@ import {
   Button,
   Stack,
   useDisclosure,
-//   useBreakpointValue,
+  //   useBreakpointValue,
   Container,
   Badge,
-} from '@chakra-ui/react';
-import { Menu, Heart } from 'lucide-react';
-import SearchBar from './SearchBar';
-import CartIcon from './CartIcon';
-import BrandDropdown from "./BrandDropdown"
-import CategoryDropdown from "./CategoryDrpdown"
+} from "@chakra-ui/react";
+import { Menu, Heart } from "lucide-react";
+import SearchBar from "./SearchBar";
+import CartIcon from "./CartIcon";
+import BrandDropdown from "./BrandDropdown";
+import CategoryDropdown from "./CategoryDrpdown";
 import CartCount from "../utilities/cartCount";
-import { useAuth } from "../context/authContext"
-import AccountMenu from "./Account"
+import { useAuth } from "../context/authContext";
+import AccountMenu from "./Account";
 
 const Header = () => {
-    const { isOpen, onToggle } = useDisclosure();
-  const navigate = useNavigate()
+  const { isOpen, onToggle } = useDisclosure();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const location = useLocation();
-    
-     
+
   const hideFlash = location.pathname.startsWith("/flash-sale");
   const hideOut = location.pathname.startsWith("/out-of-stock");
   const hideAdd = location.pathname.startsWith("/add-product");
   const hideUser = location.pathname.startsWith("/user");
 
-  
+  const handleNavigation = (path) => {
+    navigate(path);
+    onToggle(); // Close the mobile menu
+  };
 
   return (
     <Box
@@ -65,8 +67,8 @@ const Header = () => {
           {/* Premium Logo */}
           <Flex align="center">
             <Text
-              as="a"
-              href="/"
+              as={Link}
+              to="/"
               fontSize="3xl"
               fontWeight="800"
               bgGradient="linear(to-r, blue.600, purple.600)"
@@ -165,13 +167,50 @@ const Header = () => {
               >
                 <CategoryDropdown label="Collections" />
               </Button>
+              {!hideFlash && (
+                <Button
+                  as={Link}
+                  to="/flash-sale"
+                  variant="ghost"
+                  bg="white"
+                  size="md"
+                  fontWeight="500"
+                  color="gray.700"
+                  position="relative"
+                  _hover={{
+                    color: "blue.600",
+                    bg: "transparent",
+                    transform: "translateY(-1px)",
+                    _after: {
+                      width: "100%",
+                      opacity: 1,
+                    },
+                  }}
+                  _after={{
+                    content: '""',
+                    position: "absolute",
+                    bottom: "-4px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "0%",
+                    height: "2px",
+                    bg: "blue.600",
+                    opacity: 0,
+                    transition: "all 0.3s ease",
+                  }}
+                  transition="all 0.2s ease"
+                >
+                  Hot Deals
+                </Button>
+              )}
               {user?.role &&
                 (user.role === "admin" || user.role === "staff") &&
                 !hideOut && (
                   <Button
-                    as="a"
-                    href="/out-of-stock"
+                    as={Link}
+                    to="/users"
                     variant="ghost"
+                    bg="white"
                     size="md"
                     fontWeight="500"
                     color="gray.700"
@@ -199,44 +238,7 @@ const Header = () => {
                     }}
                     transition="all 0.2s ease"
                   >
-                    Out of stock
-                  </Button>
-                )}
-              {user?.role &&
-                (user.role === "admin" || user.role === "staff") &&
-                !hideAdd && (
-                  <Button
-                    as="a"
-                    href="/add-product"
-                    variant="ghost"
-                    size="md"
-                    fontWeight="500"
-                    color="gray.700"
-                    position="relative"
-                    _hover={{
-                      color: "blue.600",
-                      bg: "transparent",
-                      transform: "translateY(-1px)",
-                      _after: {
-                        width: "100%",
-                        opacity: 1,
-                      },
-                    }}
-                    _after={{
-                      content: '""',
-                      position: "absolute",
-                      bottom: "-4px",
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      width: "0%",
-                      height: "2px",
-                      bg: "blue.600",
-                      opacity: 0,
-                      transition: "all 0.3s ease",
-                    }}
-                    transition="all 0.2s ease"
-                  >
-                    Add Items
+                    Users
                   </Button>
                 )}
             </Stack>
@@ -252,10 +254,30 @@ const Header = () => {
             <SearchBar />
           </Box>
 
-          
           {/* User Account */}
           <AccountMenu />
-          
+          {user?.role &&
+            (user.role === "admin" || user.role === "staff") &&
+            !hideOut && (
+              <Button
+              onClick={() => handleNavigation("/add-product")}
+                display="inline-flex"
+                variant="ghost"
+                size="md"
+               
+                fontWeight="500"
+                color="gray.700"
+                _hover={{
+                  color: "blue.600",
+                  bg: "blue.50",
+                  transform: "translateY(-1px)",
+                }}
+                transition="all 0.2s ease"
+              >
+                Add Items
+              </Button>
+            )}
+
           {/* Cart Icon with item count */}
 
           <Button
@@ -310,7 +332,6 @@ const Header = () => {
             borderRadius="0 0 xl xl"
           >
             <Stack pt={4} pb={3} spacing={1}>
-              
               <Button
                 bg="white"
                 size="md"
@@ -340,7 +361,7 @@ const Header = () => {
                 }}
                 transition="all 0.2s ease"
               >
-                <BrandDropdown label="Shop" />
+                <BrandDropdown onClick={onToggle} label="Shop" />
               </Button>
               <Button
                 variant="ghost"
@@ -372,14 +393,13 @@ const Header = () => {
                 }}
                 transition="all 0.2s ease"
               >
-                <CategoryDropdown label="Collections" />
+                <CategoryDropdown onClick={onToggle} label="Collections" />
               </Button>
               {user?.role &&
                 (user.role === "admin" || user.role === "staff") &&
                 !hideOut && (
                   <Button
-                    as="a"
-                    href="/out-of-stock"
+                    onClick={() => handleNavigation("/out-of-stock")}
                     variant="ghost"
                     size="md"
                     fontWeight="500"
@@ -415,8 +435,7 @@ const Header = () => {
                 (user.role === "admin" || user.role === "staff") &&
                 !hideAdd && (
                   <Button
-                    as="a"
-                    href="/add-product"
+                    onClick={() => handleNavigation("/add-product")}
                     variant="ghost"
                     size="md"
                     fontWeight="500"
@@ -449,45 +468,45 @@ const Header = () => {
                   </Button>
                 )}
               <Box borderTop="1px" borderColor="gray.100" pt={4} mt={2}>
-                {!hideFlash && (<Button
-                  as="a"
-                  href="/flash-sale"
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  // leftIcon={<User size={18} />}
-                  size="lg"
-                  fontWeight="500"
-                  color="gray.700"
-                  _hover={{
-                    color: "blue.600",
-                    bg: "blue.50",
-                    transform: "translateX(8px)",
-                  }}
-                  transition="all 0.2s ease"
-                >
-                  Hot Deals
-                </Button>
-                )}
-                {user?.role &&
-                  (user.role === "admin" || user.role === "staff") &&
-                  !hideUser && (<Button
-                    as="a"
-                    href="/user"
+                {!hideFlash && (
+                  <Button
+                    onClick={() => handleNavigation("/flash-sale")}
                     variant="ghost"
                     justifyContent="flex-start"
-                    leftIcon={<Heart size={18} />}
+                    // leftIcon={<User size={18} />}
                     size="lg"
                     fontWeight="500"
                     color="gray.700"
                     _hover={{
-                      color: "red.500",
-                      bg: "red.50",
+                      color: "blue.600",
+                      bg: "blue.50",
                       transform: "translateX(8px)",
                     }}
                     transition="all 0.2s ease"
                   >
-                    User
+                    Hot Deals
                   </Button>
+                )}
+                {user?.role &&
+                  (user.role === "admin" || user.role === "staff") &&
+                  !hideUser && (
+                    <Button
+                      onClick={() => handleNavigation("/users")}
+                      variant="ghost"
+                      justifyContent="flex-start"
+                      leftIcon={<Heart size={18} />}
+                      size="lg"
+                      fontWeight="500"
+                      color="gray.700"
+                      _hover={{
+                        color: "red.500",
+                        bg: "red.50",
+                        transform: "translateX(8px)",
+                      }}
+                      transition="all 0.2s ease"
+                    >
+                      User
+                    </Button>
                   )}
               </Box>
             </Stack>

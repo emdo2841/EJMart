@@ -93,7 +93,7 @@ const OutOfStockProducts = () => {
 
   if (loading) {
     return (
-      <Center p={4}>
+      <Center p={4} minH="100vh">
         <Box
           as="div"
           border="4px solid transparent"
@@ -107,29 +107,34 @@ const OutOfStockProducts = () => {
     );
   }
 
-  if (error) return <p>Error: {error}</p>;
+  if (error) return (
+    <Center height="100vh">
+      <p>Error: {error}</p>
+    </Center>
+  );
 
   const totalPages = Math.ceil(totalProducts / limit);
 
   return (
-    <Center flexDir="column" p="4">
+    <Center flexDir="column" p="4" height="100vh">
       <Text fontSize="2xl" fontWeight="bold" mb="4">
         Out Of Stock
       </Text>
 
       {products.length > 0 ? (
         <Grid
-          templateColumns={{
-            base: "repeat(3, 1fr)",
-            sm: "repeat(3, 1fr)",
-            md: "repeat(4, 1fr)",
-            lg: "repeat(5, 1fr)",
-            xl: "repeat(7, 1fr)",
+          templateColumns="repeat(auto-fit, minmax(200px, 1fr))"
+          maxW={{
+            base: "100%", // fallback for very small screens
+            sm: "600px", // ≥ 480px
+            md: "800px", // ≥ 768px
+            lg: "1000px", // ≥ 992px
+            xl: "1200px", // ≥ 1280px
           }}
-          gap={4}
-          w="full"
-          maxW="1200px"
+          gap={5}
+          justifyContent="center"
           p={{ base: "2", md: "4" }}
+          mt="-4"
         >
           {products.map((product) => (
             <GridItem
@@ -138,16 +143,19 @@ const OutOfStockProducts = () => {
               borderWidth="1px"
               borderColor="gray.300"
               borderRadius="md"
+              border="none"
               textAlign="center"
-              minH="200px"
-              shadow="md"
+              minH="150px"
+              shadow="lg"
               transition="all 0.2s"
               _hover={{ shadow: "lg", transform: "scale(1.02)" }}
             >
               <Image
+                w="50px"
+                height="80px"
                 src={product.images[0]}
                 alt={product.name}
-                boxSize={{ base: "50px", sm: "60px", md: "80px" }}
+                boxSize={{ base: "70px", sm: "80px", md: "90px" }}
                 objectFit="cover"
                 mx="auto"
                 mb="1"
@@ -166,13 +174,11 @@ const OutOfStockProducts = () => {
               <Text fontSize="xs" color="red.500">
                 {product.discountPercentage.toFixed(2)}% off
               </Text>
-              <Text fontSize="xs" >
-               Stocks Available: {product.stock}
-              </Text>
+              <Text fontSize="xs">Stocks Available: {product.stock}</Text>
               <Button
                 colorScheme="green"
                 onClick={() => addToCart(product)}
-                mt="1"
+                m="1"
                 size="xs"
               >
                 Add to Cart
@@ -180,7 +186,7 @@ const OutOfStockProducts = () => {
               <Button
                 colorScheme="green"
                 onClick={() => navigate(`/product/${product._id}`)}
-                mt="1"
+                m1="1"
                 size="xs"
               >
                 View

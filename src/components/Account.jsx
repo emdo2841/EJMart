@@ -1,22 +1,26 @@
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Button,
-
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 // import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { startTransition } from "react";
-import {  User } from "lucide-react";
+import { User } from "lucide-react";
 import { FaSignOutAlt, FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { useAuth } from "../context/authContext";
 
 const AccountMenu = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const location = useLocation();
+
+  const hideProfile = location.pathname.startsWith("/profile");
+ 
+      
+       
+    const hideLogin = location.pathname.startsWith("/login");
+        
+         
+      const hideSignup = location.pathname.startsWith("/signup");
+
   const handleNavigate = (path) => {
     startTransition(() => {
       navigate(path);
@@ -42,32 +46,38 @@ const AccountMenu = () => {
         Account
       </MenuButton>
       <MenuList>
-        <MenuItem
-          leftIcon={<User size={18} />}
-          onClick={() => handleNavigate("/profile")}
-        >
-          Profile
-        </MenuItem>
-        {!user && (
+        {user && !hideProfile && (
+          <MenuItem
+            leftIcon={<User size={18} />}
+            onClick={() => handleNavigate("/profile")}
+          >
+            Profile
+          </MenuItem>
+        )}
+        {!user && !hideLogin && (
           <MenuItem
             as={Button}
-            leftIcon={<FaSignInAlt size={18} />}
+            rightIcon={<FaSignInAlt size={18} />}
             onClick={() => handleNavigate("/login")}
           >
             login
           </MenuItem>
         )}
-        {!user && (
+        {!user && !hideSignup && (
           <MenuItem
             as={Button}
-            leftIcon={<FaUserPlus />}
+            rightIcon={<FaUserPlus />}
             onClick={() => handleNavigate("/signup")}
-          ></MenuItem>
+          >Sign Up</MenuItem>
         )}
-              {user && (<MenuItem onClick={() => handleNavigate("/order")}>Order</MenuItem>)}
-              {user && (<MenuItem leftIcon={<FaSignOutAlt />} as={Link} to="/logout">
-                  Logout
-              </MenuItem>)}
+        {user && (
+          <MenuItem onClick={() => handleNavigate("/order")}>Order</MenuItem>
+        )}
+        {user && (
+          <MenuItem leftIcon={<FaSignOutAlt />} as={Link} to="/logout">
+            Logout
+          </MenuItem>
+        )}
       </MenuList>
     </Menu>
   );

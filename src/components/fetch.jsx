@@ -144,7 +144,7 @@ const Products = () => {
             justifyContent="center"
             spacing={6}
             p={{ base: "2", md: "4" }}
-            mt={{base: "7", lg: "5"}}
+            mt="7"
           >
             {products.map((product) => (
               <GridItem
